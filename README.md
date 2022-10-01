@@ -11,7 +11,8 @@ Nuestro proyecto tiene como objetivo simular una batalla entre dos ejércitos. D
 - Defensa
 - Vida
 - Velocidad
-- Alcance de ataque
+- Alcance de ataque.
+
 Cada una de estas estadísticas se definen al inicio de la simulación cuando es creado cada soldado y tienen valores predeterminados.
 Además los soldados podrán vestir algunos tipos de armaduras que potenciarán sus estadisticas vitales, de modo que las mismas serán decisivas en el resultado final del enfrentamiento.
 Estos soldados "pelearán" en un campo de batalla que estará representado por una matriz bidimensional. Los soldados en el momento que se crean se ubican en una posición válida de la matriz.
