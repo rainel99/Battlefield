@@ -25,6 +25,5 @@ Estos soldados "pelearán" en un campo de batalla que estará representado por u
 - Para finalizar la simualción se puede elegir entre alguno de estos criterios:
   - Un ejército perdió a todas sus tropas.
   - Luego de un número N de iteraciones algún ejército es el 20% del otro.
-  - Luego de un número N de iteracones se detiene le simulación y el ejército ganador será el que tenga mayor cantidad de vida total, se define como vida total a la suma
-   de los puntos de vidas de los soldados vivos en el momento que se detuvo la simulación.
+  - Luego de un número N de iteracines se detiene le simulación y el ejército ganador será el que tenga mayor cantidad de vida total, se define como vida total a la suma de los puntos de vidas de los soldados vivos en el momento que se detuvo la simulación.
  
