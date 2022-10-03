@@ -61,3 +61,10 @@ class Map():
                         population_map[i][j] = 2.0 # 2.0 significa "B"
         # devolver valores mapeados
         return(population_map)
+
+    def remove_fallen_soldiers(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.battlefield[i][j]:
+                    if self.battlefield[i][j].life_points <= 0:
+                        self.battlefield[i][j] = None
