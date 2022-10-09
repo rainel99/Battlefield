@@ -15,7 +15,7 @@ class Soldier():
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.army = army
-        self.attack_range = 3
+        self.attack_range = 2
         self.attack = 60
         self.defense = 20
         self.speed = random.randrange(0,50)
@@ -35,6 +35,14 @@ class Soldier():
 
 
     def attack_strategy_one(self,map):
+        """
+        Este metodo recibe el mapa del terreno y busca si en el rango de ataque de este soldado
+        un enemigo para atacarlo. Cuando encuentra al primer oponente se detiene la busqueda y 
+        se decide atacar dicho soldado.
+
+        Args:
+            map (Map): Mapa de la simualcion
+        """
         found_oponent = False
         for i in range(self.pos_x - self.attack_range,self.pos_x + self.attack_range + 1):
             if found_oponent :
@@ -61,6 +69,8 @@ class Soldier():
 
 
             
+    def move_soldier(self):
+        pass 
                 
                 
 def create_soldier(amount_of_soldier, army ,map):
@@ -76,7 +86,7 @@ def create_soldier(amount_of_soldier, army ,map):
     """
     soldiers = []
     for _ in range(amount_of_soldier):
-        pos_x,pos_y = map.get_free_cell()
+        pos_x,pos_y = map.get_free_cell(army)
         if pos_x == None and pos_y == None:
             return -1
         temp = Soldier(pos_x,pos_y,army)
@@ -84,5 +94,6 @@ def create_soldier(amount_of_soldier, army ,map):
         map.battlefield[pos_x][pos_y] = temp
 
     return soldiers
+
 
 

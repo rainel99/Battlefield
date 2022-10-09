@@ -1,6 +1,7 @@
 from Soldier import *
 from Battlefield import *
 import random
+import Graph_simulation
 
 
 
@@ -20,9 +21,17 @@ def start_simulation(map_rows, map_cols,amount_army_A, amount_army_B, rounds):
     soldiers.sort(key = lambda soldier : soldier.speed, reverse= True)
 
     map.plot_battlefield(populated_map, "Mapa antes de la simulacion (red = Army A, blue = Army B)")
+
+    soldiers_A = []
+    soldiers_B = []
+
     pyplot.show()
+
+    iterations = [i for i in range(rounds)]
     while rounds> 0:
-        #?mandar a todo los soldados a atcar
+
+        soldiers_A, soldiers_B = Graph_simulation.count_soldiers_alive(soldiers_A,soldiers_B,map)
+        #mandar a todo los soldados a atcar
         for soldier in soldiers:
             soldier.attack_strategy_one(map)
         #luego de cada ronda, donde todos los soldados ataquen, se debe quitar de la lista de los soldados aquellos que tengan vida <= 0
@@ -30,11 +39,12 @@ def start_simulation(map_rows, map_cols,amount_army_A, amount_army_B, rounds):
         #lo mismo debe hacerse en el campo de batalla
         map.remove_fallen_soldiers()
         rounds -= 1
-    #volver a     
+    #colocar los soldados que quedaron en el mapa para plotearlo
     battlefield_after_battle = map.populate_battlefield(map.battlefield, map.get_row(),map.get_col())
     map.plot_battlefield(battlefield_after_battle, "Mapa despues de la simulacion (red = Army A, blue = Army B)")
     pyplot.show()
-
+    Graph_simulation.plot_soldiers_alive("battle progression",iterations,soldiers_A,soldiers_B)
+    pyplot.show()
 
 
 def remove_soldier_form_list(soldiers):
@@ -42,4 +52,4 @@ def remove_soldier_form_list(soldiers):
         if soldier.life_points <= 0:
             soldiers.pop(i)
 
-start_simulation(50,50,500,500,50)
+start_simulation(50,50,300,500,15)
