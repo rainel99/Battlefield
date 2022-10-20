@@ -69,8 +69,9 @@ class Soldier():
 
 
             
-    def move_soldier(self):
-        pass 
+    def move_soldier(self,map : Map):
+        pass
+
                 
                 
 def create_soldier(amount_of_soldier, army ,map):
@@ -94,6 +95,7 @@ def create_soldier(amount_of_soldier, army ,map):
         map.battlefield[pos_x][pos_y] = temp
 
     return soldiers
+
 
 
 
