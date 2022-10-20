@@ -24,13 +24,20 @@ class Map():
     def is_free_cell(self,row,col):
         return self.get_battlefield()[row][col] == None
 
-    def get_free_cell(self):
+    #coloca los soldados en el campo de batalla, ubicando cada ejercito
+    #en una de las mitades de la matriz
+    def get_free_cell(self,army):
         free_cells = []
-        for row in range(self.get_row()):
-            for col in range(self.get_col()):
-                if self.is_free_cell(row,col):
-                    free_cells.append((row,col))
-        
+        if army == 'A':
+            for row in range(self.get_row()): #range(0, self.rows//2)
+                for col in range(self.get_col()): #range(self.get_col())
+                    if self.is_free_cell(row,col):
+                        free_cells.append((row,col))
+        if army == 'B':
+            for row in range(self.get_row()):#range(self.rows//2, self.rows)
+                for col in range(self.get_col()):#range(self.get_col())
+                    if self.is_free_cell(row,col):
+                        free_cells.append((row,col))
         if len(free_cells) == 0:
             return None, None
 
@@ -61,3 +68,10 @@ class Map():
                         population_map[i][j] = 2.0 # 2.0 significa "B"
         # devolver valores mapeados
         return(population_map)
+
+    def remove_fallen_soldiers(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.battlefield[i][j]:
+                    if self.battlefield[i][j].life_points <= 0:
+                        self.battlefield[i][j] = None
