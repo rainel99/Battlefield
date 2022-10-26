@@ -32,7 +32,11 @@ class Soldier():
     def get_army(self):
         return self.army
 
+    def __str__(self) -> str:
+        return str(self.army)
 
+    def __repr__(self) -> str:
+        return self.__str__()
 
     def attack_strategy_one(self,map):
         """
