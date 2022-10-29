@@ -1,12 +1,12 @@
 from Soldier import *
 from Battlefield import *
-import random
 import Graph_simulation
+import auxiliar
 
 
 
 def start_simulation(map_rows, map_cols,amount_army_A, amount_army_B, rounds):
-    soldiers = [] #lista que contendra todos los soldados de la simulacion
+    soldiers : List[Soldier] = [] #lista que contendra todos los soldados de la simulacion
     map = Map(map_rows,map_cols) #mapa de la simulacion
     army_A = create_soldier(amount_army_A,'A',map) 
     army_B = create_soldier(amount_army_B,'B',map)
@@ -38,7 +38,18 @@ def start_simulation(map_rows, map_cols,amount_army_A, amount_army_B, rounds):
         remove_soldier_form_list(soldiers)
         #lo mismo debe hacerse en el campo de batalla
         map.remove_fallen_soldiers()
+
+        #mandara a los soldados vivos a moverse
+        for soldier in soldiers:
+            if soldier.get_life_points() > 0:
+                next_pos = auxiliar.bfs(map.get_battlefield(),(soldier.get_pos_x(),soldier.get_pos_y()),soldier)
+                if next_pos != None:
+                    soldier.move_soldier(next_pos[0],next_pos[1])
+
         rounds -= 1
+
+
+        print(rounds)
     #colocar los soldados que quedaron en el mapa para plotearlo
     battlefield_after_battle = map.populate_battlefield(map.battlefield, map.get_row(),map.get_col())
     map.plot_battlefield(battlefield_after_battle, "Mapa despues de la simulacion (red = Army A, blue = Army B)")
@@ -52,4 +63,4 @@ def remove_soldier_form_list(soldiers):
         if soldier.life_points <= 0:
             soldiers.pop(i)
 
-start_simulation(50,50,300,500,15)
+start_simulation(10,10,20,20,100)
