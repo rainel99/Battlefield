@@ -32,11 +32,15 @@ class Soldier():
     def get_army(self):
         return self.army
 
+    def __str__(self) -> str:
+        return str(self.army)
 
+    def __repr__(self) -> str:
+        return self.__str__()
 
     def attack_strategy_one(self,map):
         """
-        Este metodo recibe el mapa del terreno y busca si en el rango de ataque de este soldado
+        Este metodo recibe el mapa del terreno y busca si en el rango de ataque de este soldado hay
         un enemigo para atacarlo. Cuando encuentra al primer oponente se detiene la busqueda y 
         se decide atacar dicho soldado.
 
@@ -53,25 +57,25 @@ class Soldier():
                 if i >= map.get_row() or j >= map.get_col():
                     break
                 if map.battlefield[i][j]:
-                    if map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points >0 :
+                    if map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0 :
                         self.fight_to(map.battlefield[i][j])
                         found_oponent = True
                         break
 
 
     def fight_to(self,other_soldier):
-        if other_soldier.defense == 0:
-            other_soldier.life_points = other_soldier.life_points - self.attack
+        if other_soldier.defense <= 0:
+            other_soldier.life_points -= self.attack
             return
         if other_soldier.defense <= self.attack:
-            other_soldier.life_points = other_soldier.life_points - (self.attack - other_soldier.defense)
-        other_soldier.defense = other_soldier.defense - self.attack
+            other_soldier.life_points -= (self.attack - other_soldier.defense)
+        other_soldier.defense -= self.attack
 
 
             
-    def move_soldier(self,map : Map):
-        pass
-
+    def move_soldier(self,pos_x, pos_y):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
                 
                 
 def create_soldier(amount_of_soldier, army ,map):

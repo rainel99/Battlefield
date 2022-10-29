@@ -24,6 +24,15 @@ class Map():
     def is_free_cell(self,row,col):
         return self.get_battlefield()[row][col] == None
 
+    #funcion para devolver una instancia del mapa
+    def copy(self):
+        graph = [None for _ in range(self.get_row) for _ in range(self.get_col())]
+        for row in range(self.get_row()):
+            for col in range(self.get_col()):
+                if not self.is_free_cell(row,col):
+                    graph[row][col] = self.battlefield[row][col].army
+        return graph
+
     #coloca los soldados en el campo de batalla, ubicando cada ejercito
     #en una de las mitades de la matriz
     def get_free_cell(self,army):
