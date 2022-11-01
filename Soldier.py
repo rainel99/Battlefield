@@ -3,6 +3,7 @@
 
 import random
 from typing import List
+from unittest import BaseTestSuite
 from Battlefield import Map
 
 
@@ -76,8 +77,13 @@ class Soldier():
     def move_soldier(self,pos_x, pos_y,battlefield):
         if battlefield[pos_x][pos_y] != None:
             print("me movi para donde hay alguien, error")
+            # print(self.pos_x,self.pos_y,"Donde estoy")
+            # print(pos_x,pos_y,"A donde quiero ir ")
+            # print(battlefield[pos_x][pos_y],"Lo q hay donde quiero ir ")
+            # print(battlefield)
         else:
             battlefield[pos_x][pos_y] = self
+            battlefield[self.pos_x][self.pos_y] = None #Desface
         self.pos_x = pos_x
         self.pos_y = pos_y
                 

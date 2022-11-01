@@ -34,12 +34,14 @@ def start_simulation(map_rows, map_cols,amount_army_A, amount_army_B, rounds):
     while rounds> 0:
 
         soldiers_A, soldiers_B = Graph_simulation.count_soldiers_alive(soldiers_A,soldiers_B,map)
-
+        print(soldiers_A,soldiers_B,"lo que ha contado")
+        print(map.battlefield,"Estado verdadero")
         #mandar a todo los soldados a atcar
         for soldier in soldiers:
             attacked = soldier.attack_strategy_one(map)
             if not attacked:
                 next_pos = auxiliar.bfs(map.get_battlefield(),soldier)
+                print(map.get_battlefield(),"lo que le entra el bfs")
                 if next_pos != None:
                     soldier.move_soldier(next_pos[0],next_pos[1],map.get_battlefield())
         #luego de cada ronda, donde todos los soldados ataquen, se debe quitar de la lista de los soldados aquellos que tengan vida <= 0
@@ -62,6 +64,7 @@ def start_simulation(map_rows, map_cols,amount_army_A, amount_army_B, rounds):
     map.plot_battlefield(battlefield_after_battle, "Mapa despues de la simulacion (red = Army A, blue = Army B)")
     pyplot.show()
     Graph_simulation.plot_soldiers_alive("battle progression",iterations,soldiers_A,soldiers_B)
+    print(soldiers_A, soldiers_B, "Cantidad de soldados")
     pyplot.show()
 
 

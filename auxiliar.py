@@ -20,6 +20,7 @@ def bfs(map,soldier):
     my_queue = []
     current_node  = (soldier.get_pos_x(),soldier.get_pos_y())
     my_queue.append(current_node)
+    initial_pos = (soldier.get_pos_x(),soldier.get_pos_y())
 
     while my_queue:
         current_node = my_queue.pop(0)
@@ -28,7 +29,7 @@ def bfs(map,soldier):
             new_row = current_node[0] + directions_row[i] 
             new_col = current_node[1] + directions_col[i]
             if in_range(new_row,new_col,len(map),len(map[0])) and (new_row,new_col) not in visit_complete and (new_col,new_col) not in my_queue :
-                if map[new_row][new_col] != None and map[new_row][new_col].army != soldier.army:
+                if map[new_row][new_col] != None and map[new_row][new_col].army != soldier.army and current_node != initial_pos:  #Aqui estaba uno de los errores 
                     return current_node
                 if map[new_row][new_col] == None:
                     my_queue.append((new_row,new_col))
