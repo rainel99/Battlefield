@@ -50,7 +50,7 @@ class Soldier():
         found_oponent = False
         for i in range(self.pos_x - self.attack_range,self.pos_x + self.attack_range + 1):
             if found_oponent :
-                break
+                return found_oponent
             for j in range(self.pos_y - self.attack_range, self.pos_y + self.attack_range):
                 if i < 0 or j < 0:
                     break
@@ -73,7 +73,11 @@ class Soldier():
 
 
             
-    def move_soldier(self,pos_x, pos_y):
+    def move_soldier(self,pos_x, pos_y,battlefield):
+        if battlefield[pos_x][pos_y] != None:
+            print("me movi para donde hay alguien, error")
+        else:
+            battlefield[pos_x][pos_y] = self
         self.pos_x = pos_x
         self.pos_y = pos_y
                 

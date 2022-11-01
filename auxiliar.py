@@ -1,58 +1,53 @@
 #direct_array:   N,S,E,W,NW,NE,SW,SE
+
 directions_row = [-1,1,0,0]
 directions_col = [0,0,1,-1]
+import time
+from Soldier import Soldier
 
 
-def bfs(map, current_node,soldier):
-    # graph = map.copy()
+
+def fix_axes(iterations, soldiers_A,soldiers_B):
+    temp_A = soldiers_A[len(soldiers_A) - 1]
+    while len(iterations) != len(soldiers_A):
+        soldiers_A.append(temp_A)
+    temp_B = soldiers_B[len(soldiers_B) - 1]
+    while len(iterations) != len(soldiers_B):
+        soldiers_B.append(temp_B)
+
+def bfs(map,soldier):
     visit_complete = []
-    pi = {}
-    queue = []
-    queue.append(current_node)
-    pos_dest = None
-    
+    my_queue = []
+    current_node  = (soldier.get_pos_x(),soldier.get_pos_y())
+    my_queue.append(current_node)
 
-    while queue:
-        s = queue.pop(0)
-        visit_complete.append(s)
-        if map[s[0]][s[1]] != None and map[s[0]][s[1]].army != soldier.army: #encontre un soldado del ejercito contrario
-            pos_dest = (s[0],s[1])
-            return build_way_back(pi,pos_dest,(soldier.get_pos_x(),soldier.get_pos_y()))
+    while my_queue:
+        current_node = my_queue.pop(0)
+        visit_complete.append(current_node)
+        for i in range(len(directions_col)):
+            new_row = current_node[0] + directions_row[i] 
+            new_col = current_node[1] + directions_col[i]
+            if in_range(new_row,new_col,len(map),len(map[0])) and (new_row,new_col) not in visit_complete and (new_col,new_col) not in my_queue :
+                if map[new_row][new_col] != None and map[new_row][new_col].army != soldier.army:
+                    return current_node
+                if map[new_row][new_col] == None:
+                    my_queue.append((new_row,new_col))
 
-        for ne in neighbour(map,s):
-            if ne not in visit_complete:
-                pi[ne] = s
-                queue.append(ne)
-    return None
-
-def neighbour(map, cel):
-    #devuelve las lista de los adyacentes a una posicion dada
-    result = []
-    for dir in range(len(directions_row)):
-        new_row = cel[0] + directions_row[dir] 
-        new_col = cel[1] + directions_col[dir]
-        if new_row < len(map) and new_col < len(map[0]) and new_row >= 0 and new_col >= 0:
-            result.append((new_row,new_col))
-    return result
-
-def build_way_back(dict , pos_dest, pos_start):
-    result = []
-    current = pos_dest
-    result.append(pos_dest)
-    while current != pos_start:
-        current = dict[current]
-        result.append(current)
-    result= result[::-1]
-    if len(result) > 1:
-        return result[1]
-    return result[0]
+def in_range(new_r,new_c, len_map_r,len_map_c):
+    if new_r < len_map_r and new_c < len_map_c and new_r >= 0 and new_c >= 0:
+        return True
+    return False
 
 
+a = Soldier(0,3,'A')
+b = Soldier(2,0,'B')
 
+graph = [[None,None,None,a],
+        [None,None,None,None],
+        [None,None,None,None],
+        [None,b,b,None]]
 
-
-
-
+print(bfs(graph,a))
 
 
 
