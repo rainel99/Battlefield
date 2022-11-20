@@ -38,12 +38,12 @@ class Map():
     def get_free_cell(self,army):
         free_cells = []
         if army == 'A':
-            for row in range(self.get_row()): #range(0, self.rows//2)
+            for row in range(0,self.get_row()//2): #range(0, self.rows//2)
                 for col in range(self.get_col()): #range(self.get_col())
                     if self.is_free_cell(row,col):
                         free_cells.append((row,col))
         if army == 'B':
-            for row in range(self.get_row()):#range(self.rows//2, self.rows)
+            for row in range(self.get_row()//2,self.get_row()):#range(self.rows//2, self.rows)
                 for col in range(self.get_col()):#range(self.get_col())
                     if self.is_free_cell(row,col):
                         free_cells.append((row,col))
