@@ -3,7 +3,6 @@
 
 import random
 from typing import List
-from unittest import BaseTestSuite
 from Battlefield import Map
 
 
@@ -19,7 +18,10 @@ class Soldier():
         self.attack_range = 2
         self.attack = 60
         self.defense = 20
-        self.speed = random.randrange(0,50)
+        self.speed = random.randrange(15,50)
+        self.energy = 100
+        self.age = 30  #esto debe crearse con una variable aleatoria
+        self.enery_regen = 35
 
     def get_life_points(self):
         return self.life_points

@@ -64,16 +64,16 @@ class Map():
         pyplot.yticks(fontsize = 16)
         pyplot.imshow(X = populated_battl, cmap = color_map)
 
-    def populate_battlefield(self,battlefield,row,col):
+    def populate_battlefield(self):
         # .imshow () necesita una matriz con elementos flotantes;
-        population_map = [[0.0 for _ in range(row)] for _ in range(col)]
+        population_map = [[0.0 for _ in range(self.get_row())] for _ in range(self.get_col())]
         # si el agente es de tipo A, poner 1.0, si es de tipo B, pyt 2.0
-        for i in range(row):
-            for j in range(col):
-                if battlefield[i][j]:
-                    if battlefield[i][j].army == "A": # agentes del grupo A
+        for i in range(self.get_row()):
+            for j in range(self.get_col()):
+                if self.battlefield[i][j]:
+                    if self.battlefield[i][j].army == "A": # agentes del grupo A
                         population_map[i][j] = 1.0 # 1.0 significa "A"
-                    elif battlefield[i][j].army == "B":
+                    elif self.battlefield[i][j].army == "B":
                         population_map[i][j] = 2.0 # 2.0 significa "B"
         # devolver valores mapeados
         return(population_map)
