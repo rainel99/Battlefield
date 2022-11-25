@@ -40,6 +40,16 @@ def in_range(new_r,new_c, len_map_r,len_map_c):
         return True
     return False
 
+# a = Soldier(0,0,'A')
+# b = Soldier(4,3,'B')
+# graph = [[None]*5 for _ in range(5)]
+# graph[0][0] = a
+# graph[4][3] = b
+# output = bfs(graph,a)
+# print(output)
+
+
+# print(abs(a.get_pos_x() - output[0]) + abs(a.get_pos_y() - output[1]))
 
 
 

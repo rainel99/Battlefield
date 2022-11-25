@@ -36,11 +36,13 @@ def start_simulation(map_rows, map_cols,amount_army_a, amount_army_b, rounds):
         for soldier in soldiers:
             attacked = soldier.attack_strategy_one(map)
             if not attacked:
-                start = time.time()
+                #start = time.time()
                 next_pos = auxiliar.bfs(map.get_battlefield(),soldier)
-                print(time.time() - start, "++++++++++++")
-                if next_pos is not None:
-                    soldier.move_soldier(next_pos[0],next_pos[1],map.get_battlefield())
+                if next_pos != None:
+                    spend_energy = soldier.use_energy(next_pos)
+                #print(time.time() - start, "++++++++++++")
+                    if soldier.get_energy() - spend_energy >= 0:
+                        soldier.move_soldier(next_pos[0],next_pos[1],map.get_battlefield())
         #luego de cada ronda, donde todos los soldados ataquen, se debe quitar de la lista de los soldados aquellos que tengan vida <= 0
         remove_soldier_form_list(soldiers,army_a,army_b)
 
@@ -49,6 +51,9 @@ def start_simulation(map_rows, map_cols,amount_army_a, amount_army_b, rounds):
         if len(army_a) <= len(army_b)*0.2  or len(army_b) <= len(army_a)*0.2:   ## revisar esto bien
             break
         rounds -= 1
+        #!dar energia a todos los soldados
+        for soldier in soldiers:
+            soldier.recover_enery()
     auxiliar.fix_axes(iterations,soldiers_a,soldiers_b)
     #colocar los soldados que quedaron en el mapa para plotearlo
     battlefield_after_battle = map.populate_battlefield()
@@ -58,18 +63,19 @@ def start_simulation(map_rows, map_cols,amount_army_a, amount_army_b, rounds):
     (soldiers_a, soldiers_b, "Cantidad de soldados")
     pyplot.show()
     print(army_a,army_b,len(soldiers))
+    print(map.battlefield)
 
 
 def remove_soldier_form_list(soldiers,army_a, army_b):
     for i,soldier in enumerate(soldiers):
         if soldier.life_points <= 0:
-            print(len(soldiers))
+            #print(len(soldiers))
             temp = soldiers.pop(i)
-            print(len(soldiers))
+            #print(len(soldiers))
             if temp in army_a:
                 army_a.remove(temp)
             else:
                 army_b.remove(temp)
 
 
-start_simulation(20,20,100,100,70)
+start_simulation(20,20,100,100,150)

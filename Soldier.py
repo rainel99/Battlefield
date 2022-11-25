@@ -21,7 +21,7 @@ class Soldier():
         self.speed = random.randrange(15,50)
         self.energy = 100
         self.age = 30  #esto debe crearse con una variable aleatoria
-        self.enery_regen = 35
+        self.energy_regen = 35
 
     def get_life_points(self):
         return self.life_points
@@ -40,6 +40,11 @@ class Soldier():
 
     def __repr__(self) -> str:
         return self.__str__()
+
+
+    def get_energy(self):
+        return self.energy
+
 
     def attack_strategy_one(self,map):
         """
@@ -88,8 +93,17 @@ class Soldier():
             battlefield[self.pos_x][self.pos_y] = None #Desface
         self.pos_x = pos_x
         self.pos_y = pos_y
+
+    def use_energy(self, new_pos):
+        dist_manh = abs(self.get_pos_x() - new_pos[0]) + abs(self.get_pos_y() - new_pos[1])
+        return dist_manh * 15
                 
                 
+    def recover_enery(self):
+        self.energy+= self.energy_regen
+
+
+    
 def create_soldier(amount_of_soldier, army ,map):
     """_summary_
 
@@ -111,7 +125,6 @@ def create_soldier(amount_of_soldier, army ,map):
         map.battlefield[pos_x][pos_y] = temp
 
     return soldiers
-
 
 
 
