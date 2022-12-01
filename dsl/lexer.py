@@ -106,18 +106,24 @@ class Lexer:
                     #en el sgt if se ve si la cadena q tngo hasta ahora no es una palabra clave, si lo es, anhado un token de palabra clave
                     if cadena[mtch.span()[0]:mtch.span()[1]] in key_words.keys():
                         result.append(key_words[cadena[mtch.span()[0]:mtch.span()[1]]])
-                        splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
+                        if len(cadena[mtch.span()[1]:]) > 1:
+                            splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
                         break
                     else:  
                         if j == 0:
                             result.append(Token(cadena[mtch.span()[0]:mtch.span()[1]],Identifier.identifier))
-                            splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
+                            if len(cadena[mtch.span()[1]:]) > 1:
+                                splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
                             break
                         if j == 1:
                             result.append(Token(cadena[mtch.span()[0]:mtch.span()[1]],NumericEnum.int))
-                            splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
+                            if len(cadena[mtch.span()[1]:]) > 1:
+                                splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
                             break
-                        result.append(convert_tokens[rex])
+                        else:
+                            result.append(convert_tokens[rex])
+                            if len(cadena[mtch.span()[1]:]) > 1:
+                                splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
                         break
         return result
 
@@ -197,7 +203,7 @@ convert_tokens = {
     ']'    : Token(']', GroupingOperators.ccor),
     '.'    : Token('.', Dot.dot),
     ';'    : Token(';', Semicolom.semicolom),
-    ','    : Token('.', Comma.comma)
+    ','    : Token(',', Comma.comma)
 }
 
 a = 'rainel=1 , int inta =asd while_'
