@@ -1,10 +1,10 @@
-from argparse import _ArgumentGroup
+from lib2to3.pgen2.token import RPAR
 import re
 from enum import Enum
-from shutil import register_unpack_format
 import token
 
-from cv2 import split
+from sympy import true
+
 
 
 
@@ -63,8 +63,14 @@ class NumericEnum(Enum):
     int = 1
 
 
-class Var(Enum):
-    var = 0
+class Identifier(Enum):
+    identifier = 0
+
+class While(Enum):
+    while_ = 0
+
+class If(Enum):
+    if_ = 0
 
 
 
@@ -86,22 +92,33 @@ class Lexer:
                 buffer = ""
             else:
                 buffer += c
+        if len(buffer) > 0:
+            splitted_text.append(buffer)
         return splitted_text
 
     def tokenize_text(self):
         result = []
         splitted_text = self.split_text(self.text)
-        for cadena in splitted_text:
-            if cadena in convert_tokens.keys():
-                result.append(convert_tokens[cadena])
-                continue
-            for i, rex in enumerate(regulars_expressions):
-                if re.fullmatch(rex,cadena):
-                    if i == 0:
-                        result.append(Token(cadena,Var.var))
-                    if i == 1:
-                        result.append(Token(cadena,NumericEnum.int))
-                    break
+        for i,cadena in enumerate(splitted_text):
+            for j, rex in enumerate(regulars_expressions):
+                mtch = re.match(rex,cadena)
+                if mtch:
+                    #en el sgt if se ve si la cadena q tngo hasta ahora no es una palabra clave, si lo es, anhado un token de palabra clave
+                    if cadena[mtch.span()[0]:mtch.span()[1]] in key_words.keys():
+                        result.append(key_words[cadena[mtch.span()[0]:mtch.span()[1]]])
+                        splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
+                        break
+                    else:  
+                        if j == 0:
+                            result.append(Token(cadena[mtch.span()[0]:mtch.span()[1]],Identifier.identifier))
+                            splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
+                            break
+                        if j == 1:
+                            result.append(Token(cadena[mtch.span()[0]:mtch.span()[1]],NumericEnum.int))
+                            splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
+                            break
+                        result.append(convert_tokens[rex])
+                        break
         return result
 
 
@@ -117,8 +134,41 @@ class Token():
     def __repr__(self) -> str:
         return "Token(" + "'" +  self.lex + "'" + "," + str(self.token_type) + ")"
 
+key_words = {
+            'if_' : Token('if_',If.if_),
+            'while_' : Token('while_',While.while_) 
+            }
+
+
+
 regulars_expressions = [r'([a-zA-z])+',
-                        r'([0-9])+']
+                        r'([0-9])+',
+                        r'false',
+                        r'true',
+                        r'>',
+                        r'<',
+                        r'>=',
+                        r'<=',
+                        r'==',
+                        r'!=',
+                        r'not_',
+                        r'or_',
+                        r'and_',
+                        r'\+',
+                        r'/', 
+                        r'-',
+                        r'%',
+                        r'\*',
+                        r'=',
+                        r'\(',
+                        r'\)',
+                        r'\{',
+                        r'\}',
+                        r'\[',
+                        r'\]',
+                        r'\.',
+                        r';',
+                        r',']
 
 
 convert_tokens = { 
@@ -147,26 +197,32 @@ convert_tokens = {
     ']'    : Token(']', GroupingOperators.ccor),
     '.'    : Token('.', Dot.dot),
     ';'    : Token(';', Semicolom.semicolom),
-    '.'    : Token('.', Dot.dot)
+    ','    : Token('.', Comma.comma)
 }
 
-a = "products ( ) false  * + ;. 145 "
+a = 'rainel=1 , int inta =asd while_'
 
-string_list = a.split('"')
-word_list = []
-for i in range(len(string_list)):
-    if i % 2 == 0:
-        word_list.extend(string_list[i].split())
-    else:
-        word_list.append(f'"{string_list[i]}"')
+# string_list = a.split('"')
+# word_list = []
+# for i in range(len(string_list)):
+#     if i % 2 == 0:
+#         word_list.extend(string_list[i].split())
+#     else:
+#         word_list.append(f'"{string_list[i]}"')
 
-print(word_list)
+# print(word_list)
 
 my_lexe = Lexer(a)
-tokens = my_lexe.tokenize_text()
 
+print(a)
+print(my_lexe.tokens)
 
-print(tokens)
+# b = 'rainel=1'
+# print(regulars_expressions[0])
+# t = re.match(regulars_expressions[0], b)
+# # print(t)
+# print("Asd")
 
-
-print(re.match("int", "inta"))
+# qwe = {1 : 'a', 2 : 'b'}
+# for i,x in enumerate(qwe):
+#     print(qwe)
