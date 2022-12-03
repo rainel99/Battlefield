@@ -1,11 +1,7 @@
-from lib2to3.pgen2.token import RPAR
 import re
 from enum import Enum
-import token
 
-from sympy import true
-
-
+from matplotlib.pyplot import close
 
 
 class BoolEnum(Enum):
@@ -14,110 +10,93 @@ class BoolEnum(Enum):
 
 
 class ComparisonOperator(Enum):
-    gt = 0 #mayor que >
-    lt = 1 # menor que <
-    eqeq = 2 #igual igual ==
-    noteq = 3 #distinto !=
-    gte = 4 # mayor igual >=
-    lte = 5 # menor igual <=
-    or_ = 6 # ó
-    and_ = 7 # y
-    not_ = 8 # no
+    Gt = 0 #mayor que >
+    Lt = 1 # menor que <
+    Eqeq = 2 #igual igual ==
+    Noteq = 3 #distinto !=
+    Gte = 4 # mayor igual >=
+    Lte = 5 # menor igual <=
+    Or = 6 # ó
+    And = 7 # y
+    Not = 8 # no
 
 
 class AlgebraicOperators(Enum):
-    plus = 0 # +
-    minus = 1 # -
-    star = 2 # *
-    div = 3 # /
-    mod = 4 # %
+    Plus = 0 # +
+    Minus = 1 # -
+    Star = 2 # *
+    Div = 3 # /
+    Mod = 4 # %
 
 
 class AssignmentOperator(Enum):
-    eq = 0
+    Eq = 0
 
 
 class GroupingOperators(Enum):
-    opar = 0 #(
-    cpar = 1 #)
-    okey = 2 #{
-    ckey = 3 #}
-    ocor = 4 #[
-    ccor = 5 #]
+    Opar = 0 #(
+    Cpar = 1 #)
+    Okey = 2 #{
+    Ckey = 3 #}
+    Ocor = 4 #[
+    Ccor = 5 #]
 
 
 class Comma(Enum):
-    comma = 0
+    Comma = 0
 
 
 class Dot(Enum):
-    dot = 0
+    Dot = 0
 
 
 class Semicolom(Enum):
-    semicolom = 0
+    Semicolom = 0
 
 
 class NumericEnum(Enum):
-    float = 0
-    int = 1
+    Int = 1
 
 
-class Identifier(Enum):
-    identifier = 0
+class Id(Enum):
+    Id = 0
 
 class While(Enum):
-    while_ = 0
+    While = 0
 
 class If(Enum):
-    if_ = 0
-
-
+    If = 0
 
 
 
 
 class Lexer:
-    def __init__(self,text) -> None:
-        self.text = text
-        self.tokens = self.tokenize_text()
 
-    def split_text(self,text):
-        buffer =""
-        splitted_text = []
-        for c in text:
-            if c == ' ' or c == '\n':
-                if len(buffer) > 0:
-                    splitted_text.append(buffer)
-                buffer = ""
-            else:
-                buffer += c
-        if len(buffer) > 0:
-            splitted_text.append(buffer)
-        return splitted_text
 
-    def tokenize_text(self):
+    def tokenize_text(self,text):
+        row = 0
+        col = 0
         result = []
-        splitted_text = self.split_text(self.text)
+        
+        splitted_text = text.split()
         for i,cadena in enumerate(splitted_text):
-            for j, rex in enumerate(regulars_expressions):
+            if cadena == '\n':
+                row += 1
+                continue
+            for rex in regulars_expressions:
                 mtch = re.match(rex,cadena)
                 if mtch:
                     #en el sgt if se ve si la cadena q tngo hasta ahora no es una palabra clave, si lo es, anhado un token de palabra clave
-                    if cadena[mtch.span()[0]:mtch.span()[1]] in key_words.keys():
-                        result.append(key_words[cadena[mtch.span()[0]:mtch.span()[1]]])
-                        splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
+                    subs = cadena[mtch.span()[0]:mtch.span()[1]]
+                    if subs in key_words.keys():
+                        result.append(Token(subs,key_words[subs]))
+                        if len(cadena[mtch.span()[1]:]) > 1:
+                            splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
                         break
                     else:  
-                        if j == 0:
-                            result.append(Token(cadena[mtch.span()[0]:mtch.span()[1]],Identifier.identifier))
+                        result.append(Token(cadena[:mtch.span()[1]],regulars_expressions[rex]))
+                        if len(cadena[mtch.span()[1]:]) > 0:
                             splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
-                            break
-                        if j == 1:
-                            result.append(Token(cadena[mtch.span()[0]:mtch.span()[1]],NumericEnum.int))
-                            splitted_text.insert(i + 1,cadena[mtch.span()[1]:])
-                            break
-                        result.append(convert_tokens[rex])
                         break
         return result
 
@@ -127,6 +106,8 @@ class Token():
     def __init__(self,lex,token_type) -> None:
         self.lex = lex
         self.token_type = token_type
+        self.row = -1
+        self.col = -1
 
     def __str__(self) -> str:
         return self.lex
@@ -135,94 +116,53 @@ class Token():
         return "Token(" + "'" +  self.lex + "'" + "," + str(self.token_type) + ")"
 
 key_words = {
-            'if_' : Token('if_',If.if_),
-            'while_' : Token('while_',While.while_) 
+            'if' : If.If,
+            'while' : While.While, 
+            'and' : ComparisonOperator.And,
+            'or' : ComparisonOperator.Or,
+            'not' : ComparisonOperator.Not,
             }
 
 
-
-regulars_expressions = [r'([a-zA-z])+',
-                        r'([0-9])+',
-                        r'false',
-                        r'true',
-                        r'>',
-                        r'<',
-                        r'>=',
-                        r'<=',
-                        r'==',
-                        r'!=',
-                        r'not_',
-                        r'or_',
-                        r'and_',
-                        r'\+',
-                        r'/', 
-                        r'-',
-                        r'%',
-                        r'\*',
-                        r'=',
-                        r'\(',
-                        r'\)',
-                        r'\{',
-                        r'\}',
-                        r'\[',
-                        r'\]',
-                        r'\.',
-                        r';',
-                        r',']
-
-
-convert_tokens = { 
-    'false': Token('false',BoolEnum.false),
-    'true' : Token('true', BoolEnum.true),
-    '>'    : Token('>', ComparisonOperator.gt),
-    '<'    : Token('<', ComparisonOperator.lt),
-    '>='   : Token('>=', ComparisonOperator.gte),
-    '<='   : Token('<=', ComparisonOperator.lte),
-    '=='   : Token('==', ComparisonOperator.eqeq),
-    '!='   : Token('!=', ComparisonOperator.noteq),
-    'not_' : Token('not_', ComparisonOperator.not_),
-    'or_'  : Token('or_', ComparisonOperator.or_),
-    'and_' : Token('and_', ComparisonOperator.and_),
-    '+'    : Token('+', AlgebraicOperators.plus),
-    '/'    : Token('/', AlgebraicOperators.div),
-    '-'    : Token('-', AlgebraicOperators.minus),
-    '%'    : Token('%', AlgebraicOperators.mod),
-    '*'    : Token('*', AlgebraicOperators.star),
-    '='    : Token('=', AssignmentOperator.eq),
-    '('    : Token('(', GroupingOperators.opar),
-    ')'    : Token(')', GroupingOperators.cpar),
-    '{'    : Token('{', GroupingOperators.okey),
-    '}'    : Token('}', GroupingOperators.ckey),
-    '['    : Token('[', GroupingOperators.ocor),
-    ']'    : Token(']', GroupingOperators.ccor),
-    '.'    : Token('.', Dot.dot),
-    ';'    : Token(';', Semicolom.semicolom),
-    ','    : Token('.', Comma.comma)
+regulars_expressions = { 
+    r'([0-9])+': NumericEnum.Int,
+    r'>='   :  ComparisonOperator.Gte,
+    r'<='   :  ComparisonOperator.Lte,
+    r'=='   :  ComparisonOperator.Eqeq,
+    r'!='   :  ComparisonOperator.Noteq,
+    r'false': BoolEnum.false,
+    r'true' : BoolEnum.true,
+    r'='    : AssignmentOperator.Eq,
+    r'>'    : ComparisonOperator.Gt,
+    r'<'    : ComparisonOperator.Lt,
+    # r'Not' :  ComparisonOperator.Not,
+    # r'Or'  : ComparisonOperator.Or,
+    # r'And' : ComparisonOperator.And,
+    r'\+'    : AlgebraicOperators.Plus,
+    r'/'    : AlgebraicOperators.Div,
+    r'-'    : AlgebraicOperators.Minus,
+    r'%'    : AlgebraicOperators.Mod,
+    r'\*'    : AlgebraicOperators.Star,
+    r'\('    : GroupingOperators.Opar,
+    r'\)'    : GroupingOperators.Cpar,
+    r'\{'    : GroupingOperators.Okey,
+    r'\}'    : GroupingOperators.Ckey,
+    r'\['    : GroupingOperators.Ocor,
+    r'\]'    : GroupingOperators.Ccor,
+    r'\.'    : Dot.Dot,
+    r';'    : Semicolom.Semicolom,
+    r'\,'    : Comma.Comma,
+    r'([a-zA-z])+': Id.Id
 }
 
-a = 'rainel=1 , int inta =asd while_'
+a = '<Simulacion> body <Simualacion/>'
+file = open("dsl/test.txt",'r')
+text = file.read()
+file.close()
 
-# string_list = a.split('"')
-# word_list = []
-# for i in range(len(string_list)):
-#     if i % 2 == 0:
-#         word_list.extend(string_list[i].split())
-#     else:
-#         word_list.append(f'"{string_list[i]}"')
 
-# print(word_list)
-
-my_lexe = Lexer(a)
-
+my_lexe = Lexer()
+TOKENS = my_lexe.tokenize_text(text)
 print(a)
-print(my_lexe.tokens)
+print(TOKENS)
 
-# b = 'rainel=1'
-# print(regulars_expressions[0])
-# t = re.match(regulars_expressions[0], b)
-# # print(t)
-# print("Asd")
-
-# qwe = {1 : 'a', 2 : 'b'}
-# for i,x in enumerate(qwe):
-#     print(qwe)
