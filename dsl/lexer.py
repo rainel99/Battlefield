@@ -1,11 +1,7 @@
-from lib2to3.pgen2.token import RPAR
 import re
 from enum import Enum
-import token
 
-from sympy import true
-
-
+from matplotlib.pyplot import close
 
 
 class BoolEnum(Enum):
@@ -14,57 +10,56 @@ class BoolEnum(Enum):
 
 
 class ComparisonOperator(Enum):
-    gt = 0 #mayor que >
-    lt = 1 # menor que <
-    eqeq = 2 #igual igual ==
-    noteq = 3 #distinto !=
-    gte = 4 # mayor igual >=
-    lte = 5 # menor igual <=
+    Gt = 0 #mayor que >
+    Lt = 1 # menor que <
+    Eqeq = 2 #igual igual ==
+    Noteq = 3 #distinto !=
+    Gte = 4 # mayor igual >=
+    Lte = 5 # menor igual <=
     Or = 6 # ó
     And = 7 # y
     Not = 8 # no
 
 
 class AlgebraicOperators(Enum):
-    plus = 0 # +
-    minus = 1 # -
-    star = 2 # *
-    div = 3 # /
-    mod = 4 # %
+    Plus = 0 # +
+    Minus = 1 # -
+    Star = 2 # *
+    Div = 3 # /
+    Mod = 4 # %
 
 
 class AssignmentOperator(Enum):
-    eq = 0
+    Eq = 0
 
 
 class GroupingOperators(Enum):
-    opar = 0 #(
-    cpar = 1 #)
-    okey = 2 #{
-    ckey = 3 #}
-    ocor = 4 #[
-    ccor = 5 #]
+    Opar = 0 #(
+    Cpar = 1 #)
+    Okey = 2 #{
+    Ckey = 3 #}
+    Ocor = 4 #[
+    Ccor = 5 #]
 
 
 class Comma(Enum):
-    comma = 0
+    Comma = 0
 
 
 class Dot(Enum):
-    dot = 0
+    Dot = 0
 
 
 class Semicolom(Enum):
-    semicolom = 0
+    Semicolom = 0
 
 
 class NumericEnum(Enum):
-    float = 0
-    int = 1
+    Int = 1
 
 
 class Id(Enum):
-    id = 0
+    Id = 0
 
 class While(Enum):
     While = 0
@@ -75,31 +70,20 @@ class If(Enum):
 
 
 
-
-
 class Lexer:
-    pass
-    
 
-    def split_text(self,text):
-        buffer =""
-        splitted_text = []
-        for c in text:
-            if c == ' ' or c == '\n':
-                if len(buffer) > 0:
-                    splitted_text.append(buffer)
-                buffer = ""
-            else:
-                buffer += c
-        if len(buffer) > 0:
-            splitted_text.append(buffer)
-        return splitted_text
 
     def tokenize_text(self,text):
+        row = 0
+        col = 0
         result = []
-        splitted_text = self.split_text(text)
+        
+        splitted_text = text.split()
         for i,cadena in enumerate(splitted_text):
-            for j, rex in enumerate(regulars_expressions):
+            if cadena == '\n':
+                row += 1
+                continue
+            for rex in regulars_expressions:
                 mtch = re.match(rex,cadena)
                 if mtch:
                     #en el sgt if se ve si la cadena q tngo hasta ahora no es una palabra clave, si lo es, anhado un token de palabra clave
@@ -122,6 +106,8 @@ class Token():
     def __init__(self,lex,token_type) -> None:
         self.lex = lex
         self.token_type = token_type
+        self.row = -1
+        self.col = -1
 
     def __str__(self) -> str:
         return self.lex
@@ -131,45 +117,52 @@ class Token():
 
 key_words = {
             'if' : If.If,
-            'while' : While.While 
+            'while' : While.While, 
+            'and' : ComparisonOperator.And,
+            'or' : ComparisonOperator.Or,
+            'not' : ComparisonOperator.Not,
             }
 
 
 regulars_expressions = { 
-    r'([a-zA-z])+': Id.id,
-    r'([0-9])+': NumericEnum.int,
+    r'([0-9])+': NumericEnum.Int,
+    r'>='   :  ComparisonOperator.Gte,
+    r'<='   :  ComparisonOperator.Lte,
+    r'=='   :  ComparisonOperator.Eqeq,
+    r'!='   :  ComparisonOperator.Noteq,
     r'false': BoolEnum.false,
     r'true' : BoolEnum.true,
-    r'>'    : ComparisonOperator.gt,
-    r'<'    : ComparisonOperator.lt,
-    r'>='   :  ComparisonOperator.gte,
-    r'<='   :  ComparisonOperator.lte,
-    r'=='   :  ComparisonOperator.eqeq,
-    r'!='   :  ComparisonOperator.noteq,
-    r'Not' :  ComparisonOperator.Not,
-    r'Or'  : ComparisonOperator.Or,
-    r'And' : ComparisonOperator.And,
-    r'\+'    : AlgebraicOperators.plus,
-    r'/'    : AlgebraicOperators.div,
-    r'-'    : AlgebraicOperators.minus,
-    r'%'    : AlgebraicOperators.mod,
-    r'\*'    : AlgebraicOperators.star,
-    r'='    : AssignmentOperator.eq,
-    r'\('    : GroupingOperators.opar,
-    r'\)'    : GroupingOperators.cpar,
-    r'\{'    : GroupingOperators.okey,
-    r'\}'    : GroupingOperators.ckey,
-    r'\['    : GroupingOperators.ocor,
-    r'\]'    : GroupingOperators.ccor,
-    r'\.'    : Dot.dot,
-    r';'    : Semicolom.semicolom,
-    r'\,'    : Comma.comma
+    r'='    : AssignmentOperator.Eq,
+    r'>'    : ComparisonOperator.Gt,
+    r'<'    : ComparisonOperator.Lt,
+    # r'Not' :  ComparisonOperator.Not,
+    # r'Or'  : ComparisonOperator.Or,
+    # r'And' : ComparisonOperator.And,
+    r'\+'    : AlgebraicOperators.Plus,
+    r'/'    : AlgebraicOperators.Div,
+    r'-'    : AlgebraicOperators.Minus,
+    r'%'    : AlgebraicOperators.Mod,
+    r'\*'    : AlgebraicOperators.Star,
+    r'\('    : GroupingOperators.Opar,
+    r'\)'    : GroupingOperators.Cpar,
+    r'\{'    : GroupingOperators.Okey,
+    r'\}'    : GroupingOperators.Ckey,
+    r'\['    : GroupingOperators.Ocor,
+    r'\]'    : GroupingOperators.Ccor,
+    r'\.'    : Dot.Dot,
+    r';'    : Semicolom.Semicolom,
+    r'\,'    : Comma.Comma,
+    r'([a-zA-z])+': Id.Id
 }
 
-a = 'rainel=1 , int inta =asd while While'
+a = '<Simulacion> body <Simualacion/>'
+file = open("dsl/test.txt",'r')
+text = file.read()
+file.close()
+
 
 my_lexe = Lexer()
-TOKENS = my_lexe.tokenize_text(a)
+TOKENS = my_lexe.tokenize_text(text)
 print(a)
 print(TOKENS)
 
