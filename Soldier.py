@@ -1,8 +1,10 @@
 
-
-
+from sympy import re
+import characteristics_of_soldiers
+import statistics as stat
 import random
 from typing import List
+from typing_extensions import Self
 from Battlefield import Map
 
 
@@ -20,8 +22,11 @@ class Soldier():
         self.defense = 20
         self.speed = random.randrange(15,50)
         self.energy = 100
-        self.age = 30  #esto debe crearse con una variable aleatoria
+        self.age = -1  #esto debe crearse con una variable aleatoria
         self.energy_regen = 35
+        self.crit_porb = 0
+        self.characteristics : List[characteristics_of_soldiers.Characteristics] = []
+        self.debuff = []
 
     def get_life_points(self):
         return self.life_points
@@ -41,9 +46,26 @@ class Soldier():
     def __repr__(self) -> str:
         return self.__str__()
 
+    def get_speed(self):
+        return self.speed
 
     def get_energy(self):
         return self.energy
+
+    def incress_chance_crit(self,prob):
+        self.crit_porb += prob
+
+    def get_crit(self):
+        return self.crit_porb
+
+    def get_attack(self):
+        return self.attack
+
+    def get_range_attack(self):
+        return self.attack_range
+
+    def get_defense(self):
+        return self.defense
 
 
     def attack_strategy_one(self,map):
@@ -56,38 +78,41 @@ class Soldier():
             map (Map): Mapa de la simualcion
         """
         found_oponent = False
-        for i in range(self.pos_x - self.attack_range,self.pos_x + self.attack_range + 1):
+        for i in range(self.get_pos_x() - self.get_range_attack(),self.get_pos_x() + self.get_range_attack() + 1):
             if found_oponent :
                 return found_oponent
-            for j in range(self.pos_y - self.attack_range, self.pos_y + self.attack_range):
+            for j in range(self.pos_y - self.get_range_attack(), self.pos_y + self.get_range_attack()):
                 if i < 0 or j < 0:
                     break
                 if i >= map.get_row() or j >= map.get_col():
                     break
                 if map.battlefield[i][j]:
                     if map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0 :
-                        self.fight_to(map.battlefield[i][j])
+                        self.fight_to(map.battlefield[i][j],map)
                         found_oponent = True
                         break
 
 
-    def fight_to(self,other_soldier):
+    def fight_to(self,other_soldier , map):
+        #! tener en cuenta el critico y temate_supp
+        crit = 0
+        if self.get_crit() > 0:
+            temp = random.random()
+            if temp < self.get_crit():
+                #print("viene critico!")
+                crit = self.get_attack()
         if other_soldier.defense <= 0:
-            other_soldier.life_points -= self.attack
+            other_soldier.life_points -= self.get_attack() + crit
             return
-        if other_soldier.defense <= self.attack:
-            other_soldier.life_points -= (self.attack - other_soldier.defense)
-        other_soldier.defense -= self.attack
+        if other_soldier.defense <= self.get_attack() + crit:
+            other_soldier.life_points -= (self.get_attack() + crit - other_soldier.get_defense())
+        other_soldier.defense -= self.get_attack()
 
 
             
     def move_soldier(self,pos_x, pos_y,battlefield):
         if battlefield[pos_x][pos_y] != None:
             print("me movi para donde hay alguien, error")
-            # print(self.pos_x,self.pos_y,"Donde estoy")
-            # print(pos_x,pos_y,"A donde quiero ir ")
-            # print(battlefield[pos_x][pos_y],"Lo q hay donde quiero ir ")
-            # print(battlefield)
         else:
             battlefield[pos_x][pos_y] = self
             battlefield[self.pos_x][self.pos_y] = None #Desface
@@ -103,6 +128,19 @@ class Soldier():
         self.energy+= self.energy_regen
 
 
+    def solider_age(self,mean = -1, var = -1)->int:
+        if mean == -1:
+            mean = 32
+        if var == -1:
+            var = 12
+        v = stat.NormalDist(mean, var)
+        age = v.samples(1)
+        if age[0] < 15:
+            self.solider_age(mean, var)
+        else :
+            #print(str(int(age[0]))," ++++")
+            self.age = int(age[0])
+            return age
     
 def create_soldier(amount_of_soldier, army ,map):
     """_summary_
@@ -121,10 +159,16 @@ def create_soldier(amount_of_soldier, army ,map):
         if pos_x == None and pos_y == None:
             return -1
         temp = Soldier(pos_x,pos_y,army)
+        v_a = characteristics_of_soldiers.Experience()
+        temp.solider_age()
+        v_a.apply_buff(temp)
         soldiers.append(temp)
         map.battlefield[pos_x][pos_y] = temp
 
     return soldiers
+
+
+
 
 
 
