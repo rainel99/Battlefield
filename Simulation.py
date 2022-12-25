@@ -5,27 +5,31 @@ import auxiliar
 import random as rd
 from characteristics_of_soldiers import all_characteristics, EnumAttribute
 from weather import stats as weather
+from armors import armors, dress_army, min_price
 
 
 def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
+    arms = armors
+    start_price = ((amount_army_a + amount_army_b) // 3) * 30
     # lista que contendra todos los soldados de la simulacion
     soldiers: List[Soldier] = []
     map = Map(map_rows, map_cols)  # mapa de la simulacion
     army_a = create_soldier(amount_army_a, 'A', map)
+    dress_army(army_a, start_price, min_price.price)
     army_b = create_soldier(amount_army_b, 'B', map)
-    for soldier in army_a:
-        soldiers.append(soldier)
-    for soldier in army_b:
-        soldiers.append(soldier)
+    dress_army(army_b, start_price, min_price.price)
+    auxiliar.marge_armys(army_a, army_b, soldiers)
     # se ordenan los soldados de ambos ejercitos segun su velocidad
     soldiers.sort(key=lambda soldier: soldier.speed, reverse=True)
     soldiers_a = []
     soldiers_b = []
+    # aqui estamos anhadiendo caracteristicas a los soldados, 3 por soldado
     add_soldiers_characteristics(army_a, 3)
     add_soldiers_characteristics(army_b, 3)
 
     # a partir de la region seleccionada y la fecha => generar una v_a para las precipitaciones
     rain = weather.Rain()
+    # para testear se elejira como pais espanha y mes julio
     country = "spain"
     month = "july"
     # country = input("spain o argentina: ")
@@ -55,6 +59,7 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
                     if soldier.get_energy() - spend_energy >= 0:
                         soldier.move_soldier(
                             next_pos[0], next_pos[1], map.get_battlefield())
+
         # luego de cada ronda, donde todos los soldados ataquen, se debe quitar de la lista de los soldados aquellos que tengan vida <= 0
         remove_soldier_form_list(soldiers, army_a, army_b)
         # lo mismo debe hacerse en el campo de batalla
@@ -65,8 +70,7 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
         if len(army_a) == 0 or len(army_b) == 0:
             break
         # dar energia a todos los soldados
-        for soldier in soldiers:
-            soldier.recover_enery()
+        soldier_energy(soldiers)
         if rain_mm[0] > 50:
             for sol in soldiers:
                 rain.remove_debuff(sol)
@@ -101,8 +105,13 @@ def add_soldiers_characteristics(list_soliders, max_charact):
             sol.characteristics.append(t)
 
 
+def soldier_energy(soldiers):
+    for soldier in soldiers:
+        soldier.recover_enery()
+
+
 n = 0
 while (n < 20):
     print(n)
-    start_simulation(20, 20, 100, 100, 150)
+    start_simulation(20, 20, 50, 50, 150)
     n += 1
