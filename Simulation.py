@@ -10,6 +10,7 @@ from armors import armors, dress_army, min_price
 
 def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
     arms = armors
+    # !revisar bien esto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     start_price = ((amount_army_a + amount_army_b) // 3) * 30
     # lista que contendra todos los soldados de la simulacion
     soldiers: List[Soldier] = []
@@ -19,6 +20,7 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
     army_b = create_soldier(amount_army_b, 'B', map)
     dress_army(army_b, start_price, min_price.price)
     auxiliar.marge_armys(army_a, army_b, soldiers)
+    asign_camps_to_soldiers(soldiers, map.get_camps())
     # se ordenan los soldados de ambos ejercitos segun su velocidad
     soldiers.sort(key=lambda soldier: soldier.speed, reverse=True)
     soldiers_a = []
@@ -75,6 +77,7 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
             for sol in soldiers:
                 rain.remove_debuff(sol)
         rounds -= 1
+
     auxiliar.fix_axes(iterations, soldiers_a, soldiers_b)
     # Graph_simulation.plot_soldiers_alive("battle progression",iterations,soldiers_a,soldiers_b)
     # (soldiers_a, soldiers_b, "Cantidad de soldados")
@@ -82,6 +85,7 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
     print(army_a, army_b, len(soldiers))
     # print(map.battlefield)
     # print(rounds)
+    print_map(map)
 
 
 def remove_soldier_form_list(soldiers, army_a, army_b):
@@ -108,6 +112,21 @@ def add_soldiers_characteristics(list_soliders, max_charact):
 def soldier_energy(soldiers):
     for soldier in soldiers:
         soldier.recover_enery()
+
+
+def asign_camps_to_soldiers(soldiers, camps):
+    for soldier in soldiers:
+        if soldier.army == camps[0].army:
+            soldier.camp = camps[0]
+        else:
+            soldier.camp = camps[1]
+
+
+def print_map(map):
+    for x in range(map.get_row()):
+        for y in range(map.get_col()):
+            print(map.get_battlefield()[x][y], end=' ', sep=' ')
+        print('\n')
 
 
 n = 0

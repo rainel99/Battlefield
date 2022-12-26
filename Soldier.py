@@ -5,7 +5,7 @@ import statistics as stat
 import random
 from typing import List
 from typing_extensions import Self
-from Battlefield import Map
+from Battlefield import Camp, Map
 import armors
 
 
@@ -31,6 +31,7 @@ class Soldier():
         ]
         self.debuff = []
         self.armor: armors.BassicArmor = None
+        self.camp = None
 
     def get_life_points(self):
         return self.life_points
@@ -93,7 +94,7 @@ class Soldier():
                 if i >= map.get_row() or j >= map.get_col():
                     break
                 if map.battlefield[i][j]:
-                    if map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
+                    if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
                         self.fight_to(map.battlefield[i][j], map)
                         found_oponent = True
                         break
@@ -141,7 +142,6 @@ class Soldier():
         if age[0] < 15:
             self.solider_age(mean, var)
         else:
-            #print(str(int(age[0]))," ++++")
             self.age = int(age[0])
             return age
 

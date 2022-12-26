@@ -13,6 +13,13 @@ class Map():
         self.rows = rows
         self.cols = cols
         self.battlefield = [[None for _ in range(rows)] for _ in range(cols)]
+        self.camps_for_army = 1
+        self.camps: list[Camp] = []
+        self.create_camps(self.camps_for_army, 'A')
+        self.create_camps(self.camps_for_army, 'B')
+
+    def get_camps(self):
+        return self.camps
 
     def get_row(self):
         return self.rows
@@ -36,12 +43,17 @@ class Map():
                     graph[row][col] = self.battlefield[row][col].army
         return graph
 
+    def get_free_cell_random(self, army):
+        if army == 'A':
+            return rd.randint(0, self.get_row() // 2), rd.randint(0, self.get_row())
+        return rd.randint(self.get_row() // 2, self.get_row()), rd.randint(0, self.get_row())
+
     # coloca los soldados en el campo de batalla, ubicando cada ejercito
     # en una de las mitades de la matriz
     def get_free_cell(self, army):
         free_cells = []
         if army == 'A':
-            for row in range(0, self.get_row()//2):  # range(0, self.rows//2)
+            for row in range(self.get_row()//2):  # range(0, self.rows//2)
                 for col in range(self.get_col()):  # range(self.get_col())
                     if self.is_free_cell(row, col):
                         free_cells.append((row, col))
@@ -86,6 +98,31 @@ class Map():
     def remove_fallen_soldiers(self):
         for i in range(self.rows):
             for j in range(self.cols):
-                if self.battlefield[i][j]:
+                if self.battlefield[i][j] and not isinstance(self.battlefield[i][j], Camp):
                     if self.battlefield[i][j].life_points <= 0:
                         self.battlefield[i][j] = None
+
+    def create_camps(self, camp_amount, army):
+        while camp_amount > 0:
+            pos_x, pos_y = self.get_free_cell(army)
+            self.battlefield[pos_x][pos_y] = Camp(army, pos_x, pos_y)
+            camp_amount -= 1
+            self.camps.append(self.battlefield[pos_x][pos_y])
+            print(f"campamento creado en {pos_x, pos_y}")
+
+
+class Camp(object):
+    def __init__(self, army, pos_x, pos_y) -> None:
+        self.army = army
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.visits = rd.randint(0, 15)
+        self.state = True  # variable para saber si continua permitiendo visitas
+
+    def dec_visit(self):
+        self.visits -= 1
+        if self.visits == 0:
+            self.state = False
+
+    def __repr__(self) -> str:
+        return f'{type(self).__name__}s'
