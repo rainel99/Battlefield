@@ -1,48 +1,6 @@
-from matplotlib.pyplot import close
+import enum
 import re
 from enum import Enum
-<< << << < HEAD
-
-
-class BoolEnum(Enum):
-    false = 0
-    true = 1
-
-
-class ComparisonOperator(Enum):
-    Gt = 0  # mayor que >
-    Lt = 1  # menor que <
-    Eqeq = 2  # igual igual ==
-    Noteq = 3  # distinto !=
-    Gte = 4  # mayor igual >=
-    Lte = 5  # menor igual <=
-    Or = 6  # ó
-    And = 7  # y
-    Not = 8  # no
-
-
-class AlgebraicOperators(Enum):
-    Plus = 0  # +
-    Minus = 1  # -
-    Star = 2  # *
-    Div = 3  # /
-    Mod = 4  # %
-
-
-class AssignmentOperator(Enum):
-    Eq = 0
-
-
-class GroupingOperators(Enum):
-    Opar = 0  # (
-    Cpar = 1  # )
-    Okey = 2  # {
-    Ckey = 3  # }
-    Ocor = 4  # [
-    Ccor = 5  # ]
-
-
-== == == =
 
 
 class BoolTok(Enum):
@@ -83,9 +41,6 @@ class GroOp(Enum):
     Ccor = 5  # ]
 
 
->>>>>> > strategy_combat
-
-
 class Comma(Enum):
     Comma = 0
 
@@ -116,6 +71,22 @@ class If(Enum):
 
 class Eps(Enum):
     esp = 0
+
+
+class Row(Enum):
+    row = 0
+
+
+class Col(Enum):
+    col = 0
+
+
+class ArmyName(Enum):
+    am = 0
+
+
+class Amount(Enum):
+    amount = 0
 
 
 class Lexer:
@@ -166,12 +137,16 @@ class Token():
 
 
 key_words = {
-    'if': If.If,
-    'while': While.While,
-    'and': CmpOp.And,
-    'or': CmpOp.Or,
-    'not': CmpOp.Not,
-    'eps': Eps.esp,
+    "if": If.If,
+    "while": While.While,
+    "and": CmpOp.And,
+    "or": CmpOp.Or,
+    "not": CmpOp.Not,
+    "eps": Eps.esp,
+    "row": Row.row,
+    "col": Col.col,
+    "army_name": ArmyName.am,
+    "amount": Amount.amount,
 }
 
 
@@ -186,9 +161,12 @@ regulars_expressions = {
     r'=': Equal.Eq,
     r'>': CmpOp.Gt,
     r'<': CmpOp.Lt,
+    << << << < HEAD
     # r'Not' :  CmpOp.Not,
     # r'Or'  : CmpOp.Or,
     # r'And' : CmpOp.And,
+    == == == =
+    >>>>>> > strategy_combat
     r'\+': AlgOp.Plus,
     r'/': AlgOp.Div,
     r'-': AlgOp.Minus,
@@ -203,7 +181,9 @@ regulars_expressions = {
     r'\.': Dot.Dot,
     r';': Semicolom.Semicolom,
     r'\,': Comma.Comma,
-    r'([a-zA-z])+': Id.Id
+    r'([a-zA-z])+': Id.Id,
+    r'row': Row.row,
+    r'col': Col.col
 }
 
 a = '<Simulacion> body <Simualacion/>'
