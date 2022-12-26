@@ -50,6 +50,8 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
             soldiers_a, soldiers_b, map)
         # mandar a todo los soldados a atcar
         for soldier in soldiers:
+            if soldier.weapon_life <= 0:
+                pass  # retornar al campamento
             attacked = soldier.attack_strategy_one(map)
             if not attacked:
                 #start = time.time()

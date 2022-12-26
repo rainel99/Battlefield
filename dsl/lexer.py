@@ -1,3 +1,4 @@
+import enum
 import re
 from enum import Enum
 
@@ -72,6 +73,22 @@ class Eps(Enum):
     esp = 0
 
 
+class Row(Enum):
+    row = 0
+
+
+class Col(Enum):
+    col = 0
+
+
+class ArmyName(Enum):
+    am = 0
+
+
+class Amount(Enum):
+    amount = 0
+
+
 class Lexer:
 
     def tokenize_text(self, text):
@@ -120,12 +137,16 @@ class Token():
 
 
 key_words = {
-    'if': If.If,
-    'while': While.While,
-    'and': CmpOp.And,
-    'or': CmpOp.Or,
-    'not': CmpOp.Not,
-    'eps': Eps.esp,
+    "if": If.If,
+    "while": While.While,
+    "and": CmpOp.And,
+    "or": CmpOp.Or,
+    "not": CmpOp.Not,
+    "eps": Eps.esp,
+    "row": Row.row,
+    "col": Col.col,
+    "army_name": ArmyName.am,
+    "amount": Amount.amount,
 }
 
 
@@ -140,9 +161,6 @@ regulars_expressions = {
     r'=': Equal.Eq,
     r'>': CmpOp.Gt,
     r'<': CmpOp.Lt,
-    # r'Not' :  CmpOp.Not,
-    # r'Or'  : CmpOp.Or,
-    # r'And' : CmpOp.And,
     r'\+': AlgOp.Plus,
     r'/': AlgOp.Div,
     r'-': AlgOp.Minus,
@@ -157,7 +175,9 @@ regulars_expressions = {
     r'\.': Dot.Dot,
     r';': Semicolom.Semicolom,
     r'\,': Comma.Comma,
-    r'([a-zA-z])+': Id.Id
+    r'([a-zA-z])+': Id.Id,
+    r'row': Row.row,
+    r'col': Col.col
 }
 
 a = '<Simulacion> body <Simualacion/>'

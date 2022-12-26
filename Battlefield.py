@@ -112,6 +112,7 @@ class Map():
 
 
 class Camp(object):
+
     def __init__(self, army, pos_x, pos_y) -> None:
         self.army = army
         self.pos_x = pos_x

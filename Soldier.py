@@ -15,7 +15,7 @@ class Soldier():
     """
 
     def __init__(self, pos_x, pos_y, army) -> None:
-        self.life_points = 100
+        self.life_points = 250
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.army = army
@@ -32,6 +32,7 @@ class Soldier():
         self.debuff = []
         self.armor: armors.BassicArmor = None
         self.camp = None
+        self.weapon_life = 100
 
     def get_life_points(self):
         return self.life_points
@@ -99,7 +100,9 @@ class Soldier():
                         found_oponent = True
                         break
 
-    def fight_to(self, other_soldier, map):
+    def fight_to(self, other_soldier):
+        #! mellar el arma
+        self.weapon_life -= 25
         #! tener en cuenta el critico y temate_supp
         crit = 0
         if self.get_crit() > 0:
