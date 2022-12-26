@@ -1,12 +1,16 @@
 
+import armors
+from Battlefield import Camp, Map
+from Battlefield import Map
 from sympy import re
 import characteristics_of_soldiers
 import statistics as stat
 import random
 from typing import List
 from typing_extensions import Self
-from Battlefield import Map
-import armors
+<< << << < HEAD
+== == == =
+>>>>>> > dev_rainel
 
 
 class Soldier():
@@ -15,7 +19,7 @@ class Soldier():
     """
 
     def __init__(self, pos_x, pos_y, army) -> None:
-        self.life_points = 100
+        self.life_points = 250
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.army = army
@@ -31,6 +35,8 @@ class Soldier():
         ]
         self.debuff = []
         self.armor: armors.BassicArmor = None
+        self.camp = None
+        self.weapon_life = 100
 
     def get_life_points(self):
         return self.life_points
@@ -93,12 +99,14 @@ class Soldier():
                 if i >= map.get_row() or j >= map.get_col():
                     break
                 if map.battlefield[i][j]:
-                    if map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
+                    if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
                         self.fight_to(map.battlefield[i][j], map)
                         found_oponent = True
                         break
 
-    def fight_to(self, other_soldier, map):
+    def fight_to(self, other_soldier):
+        #! mellar el arma
+        self.weapon_life -= 25
         #! tener en cuenta el critico y temate_supp
         crit = 0
         if self.get_crit() > 0:
@@ -141,7 +149,6 @@ class Soldier():
         if age[0] < 15:
             self.solider_age(mean, var)
         else:
-            #print(str(int(age[0]))," ++++")
             self.age = int(age[0])
             return age
 
