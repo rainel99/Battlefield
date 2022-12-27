@@ -6,6 +6,9 @@ import random as rd
 from characteristics_of_soldiers import all_characteristics, EnumAttribute
 from weather import stats as weather
 from armors import armors, dress_army, min_price
+# TODO
+# poner q coda golpe se melle el arma, q esto se acmule
+# hay q testear q para mapas mas grandes si creen mas campamentos y que la asignacion de los soldados a los camps funcione
 
 
 def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):

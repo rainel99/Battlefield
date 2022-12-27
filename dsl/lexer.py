@@ -1,4 +1,3 @@
-import enum
 import re
 from enum import Enum
 
@@ -161,12 +160,6 @@ regulars_expressions = {
     r'=': Equal.Eq,
     r'>': CmpOp.Gt,
     r'<': CmpOp.Lt,
-    << << << < HEAD
-    # r'Not' :  CmpOp.Not,
-    # r'Or'  : CmpOp.Or,
-    # r'And' : CmpOp.And,
-    == == == =
-    >>>>>> > strategy_combat
     r'\+': AlgOp.Plus,
     r'/': AlgOp.Div,
     r'-': AlgOp.Minus,
@@ -182,17 +175,15 @@ regulars_expressions = {
     r';': Semicolom.Semicolom,
     r'\,': Comma.Comma,
     r'([a-zA-z])+': Id.Id,
-    r'row': Row.row,
-    r'col': Col.col
 }
 
-a = '<Simulacion> body <Simualacion/>'
-file = open("dsl/test.txt", 'r')
-text = file.read()
-file.close()
+# a = '<Simulacion> body <Simualacion/>'
+# file = open("dsl/test.txt", 'r')
+# text = file.read()
+# file.close()
 
 
-my_lexe = Lexer()
-TOKENS = my_lexe.tokenize_text(text)
-print(a)
-print(TOKENS)
+# my_lexe = Lexer()
+# TOKENS = my_lexe.tokenize_text(text)
+# print(a)
+# print(TOKENS)

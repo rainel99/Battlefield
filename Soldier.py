@@ -8,9 +8,6 @@ import statistics as stat
 import random
 from typing import List
 from typing_extensions import Self
-<< << << < HEAD
-== == == =
->>>>>> > dev_rainel
 
 
 class Soldier():
@@ -152,8 +149,6 @@ class Soldier():
             self.age = int(age[0])
             return age
 
-
-<< << << < HEAD
     def solider_age(self, mean=-1, var=-1) -> int:
         if mean == -1:
             mean = 32
@@ -170,13 +165,6 @@ class Soldier():
 
 
 def create_soldier(amount_of_soldier, army, map):
-
-
-== == == =
-def create_soldier(amount_of_soldier, army, map):
-
-
->>>>>> > strategy_combat
     """_summary_
 
     Args:
@@ -192,11 +180,7 @@ def create_soldier(amount_of_soldier, army, map):
         pos_x, pos_y = map.get_free_cell(army)
         if pos_x == None and pos_y == None:
             return -1
-<< << << < HEAD
         temp = Soldier(pos_x, pos_y, army)
-== == == =
-        temp = Soldier(pos_x, pos_y, army)
->>>>>> > strategy_combat
         v_a = characteristics_of_soldiers.Experience()
         temp.solider_age()
         v_a.apply_buff(temp)
