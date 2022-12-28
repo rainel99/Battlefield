@@ -1,0 +1,489 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    AND
+    CKEY
+    CLP
+    COMMA
+    DOT
+    EQEQ
+    GTE
+    ID
+    IF
+    LTE
+    MINUS
+    NOR
+    NOTEQ
+    OKEY
+    OPP
+    OR
+    PLUS
+    STAR
+    WHILE
+
+Grammar
+
+Rule 0     S' -> Simulation
+Rule 1     Simulation -> LT SIMULATION GT M A A LT DIV SIMULATION GT
+Rule 2     M -> LT MAP GT MapDetail LT DIV MAP GT
+Rule 3     MapDetail -> ROW EQ NUMERIC SEMICOLOM MapDetail
+Rule 4     MapDetail -> COL EQ NUMERIC SEMICOLOM MapDetail
+Rule 5     MapDetail -> empty
+Rule 6     A -> LT ARMY GT ArmyDetail LT DIV ARMY GT
+Rule 7     ArmyDetail -> ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail
+Rule 8     ArmyDetail -> AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail
+Rule 9     ArmyDetail -> empty
+Rule 10    empty -> <empty>
+
+Terminals, with rules where they appear
+
+AMOUNT               : 8
+AND                  : 
+ARMY                 : 6 6
+ARMY_name            : 7
+CKEY                 : 
+CLP                  : 
+COL                  : 4
+COMMA                : 
+DIV                  : 1 2 6
+DOT                  : 
+EQ                   : 3 4 7 8
+EQEQ                 : 
+GT                   : 1 1 2 2 6 6
+GTE                  : 
+ID                   : 
+IF                   : 
+LT                   : 1 1 2 2 6 6
+LTE                  : 
+MAP                  : 2 2
+MINUS                : 
+NOR                  : 
+NOTEQ                : 
+NUMERIC              : 3 4 7 8
+OKEY                 : 
+OPP                  : 
+OR                   : 
+PLUS                 : 
+ROW                  : 3
+SEMICOLOM            : 3 4 7 8
+SIMULATION           : 1 1
+STAR                 : 
+WHILE                : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+A                    : 1 1
+ArmyDetail           : 6 7 8
+M                    : 1
+MapDetail            : 2 3 4
+Simulation           : 0
+empty                : 5 9
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . Simulation
+    (1) Simulation -> . LT SIMULATION GT M A A LT DIV SIMULATION GT
+
+    LT              shift and go to state 2
+
+    Simulation                     shift and go to state 1
+
+state 1
+
+    (0) S' -> Simulation .
+
+
+
+state 2
+
+    (1) Simulation -> LT . SIMULATION GT M A A LT DIV SIMULATION GT
+
+    SIMULATION      shift and go to state 3
+
+
+state 3
+
+    (1) Simulation -> LT SIMULATION . GT M A A LT DIV SIMULATION GT
+
+    GT              shift and go to state 4
+
+
+state 4
+
+    (1) Simulation -> LT SIMULATION GT . M A A LT DIV SIMULATION GT
+    (2) M -> . LT MAP GT MapDetail LT DIV MAP GT
+
+    LT              shift and go to state 5
+
+    M                              shift and go to state 6
+
+state 5
+
+    (2) M -> LT . MAP GT MapDetail LT DIV MAP GT
+
+    MAP             shift and go to state 7
+
+
+state 6
+
+    (1) Simulation -> LT SIMULATION GT M . A A LT DIV SIMULATION GT
+    (6) A -> . LT ARMY GT ArmyDetail LT DIV ARMY GT
+
+    LT              shift and go to state 8
+
+    A                              shift and go to state 9
+
+state 7
+
+    (2) M -> LT MAP . GT MapDetail LT DIV MAP GT
+
+    GT              shift and go to state 10
+
+
+state 8
+
+    (6) A -> LT . ARMY GT ArmyDetail LT DIV ARMY GT
+
+    ARMY            shift and go to state 11
+
+
+state 9
+
+    (1) Simulation -> LT SIMULATION GT M A . A LT DIV SIMULATION GT
+    (6) A -> . LT ARMY GT ArmyDetail LT DIV ARMY GT
+
+    LT              shift and go to state 8
+
+    A                              shift and go to state 12
+
+state 10
+
+    (2) M -> LT MAP GT . MapDetail LT DIV MAP GT
+    (3) MapDetail -> . ROW EQ NUMERIC SEMICOLOM MapDetail
+    (4) MapDetail -> . COL EQ NUMERIC SEMICOLOM MapDetail
+    (5) MapDetail -> . empty
+    (10) empty -> .
+
+    ROW             shift and go to state 14
+    COL             shift and go to state 15
+    LT              reduce using rule 10 (empty -> .)
+
+    MapDetail                      shift and go to state 13
+    empty                          shift and go to state 16
+
+state 11
+
+    (6) A -> LT ARMY . GT ArmyDetail LT DIV ARMY GT
+
+    GT              shift and go to state 17
+
+
+state 12
+
+    (1) Simulation -> LT SIMULATION GT M A A . LT DIV SIMULATION GT
+
+    LT              shift and go to state 18
+
+
+state 13
+
+    (2) M -> LT MAP GT MapDetail . LT DIV MAP GT
+
+    LT              shift and go to state 19
+
+
+state 14
+
+    (3) MapDetail -> ROW . EQ NUMERIC SEMICOLOM MapDetail
+
+    EQ              shift and go to state 20
+
+
+state 15
+
+    (4) MapDetail -> COL . EQ NUMERIC SEMICOLOM MapDetail
+
+    EQ              shift and go to state 21
+
+
+state 16
+
+    (5) MapDetail -> empty .
+
+    LT              reduce using rule 5 (MapDetail -> empty .)
+
+
+state 17
+
+    (6) A -> LT ARMY GT . ArmyDetail LT DIV ARMY GT
+    (7) ArmyDetail -> . ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail
+    (8) ArmyDetail -> . AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail
+    (9) ArmyDetail -> . empty
+    (10) empty -> .
+
+    ARMY_name       shift and go to state 23
+    AMOUNT          shift and go to state 24
+    LT              reduce using rule 10 (empty -> .)
+
+    ArmyDetail                     shift and go to state 22
+    empty                          shift and go to state 25
+
+state 18
+
+    (1) Simulation -> LT SIMULATION GT M A A LT . DIV SIMULATION GT
+
+    DIV             shift and go to state 26
+
+
+state 19
+
+    (2) M -> LT MAP GT MapDetail LT . DIV MAP GT
+
+    DIV             shift and go to state 27
+
+
+state 20
+
+    (3) MapDetail -> ROW EQ . NUMERIC SEMICOLOM MapDetail
+
+    NUMERIC         shift and go to state 28
+
+
+state 21
+
+    (4) MapDetail -> COL EQ . NUMERIC SEMICOLOM MapDetail
+
+    NUMERIC         shift and go to state 29
+
+
+state 22
+
+    (6) A -> LT ARMY GT ArmyDetail . LT DIV ARMY GT
+
+    LT              shift and go to state 30
+
+
+state 23
+
+    (7) ArmyDetail -> ARMY_name . EQ NUMERIC SEMICOLOM ArmyDetail
+
+    EQ              shift and go to state 31
+
+
+state 24
+
+    (8) ArmyDetail -> AMOUNT . EQ NUMERIC SEMICOLOM ArmyDetail
+
+    EQ              shift and go to state 32
+
+
+state 25
+
+    (9) ArmyDetail -> empty .
+
+    LT              reduce using rule 9 (ArmyDetail -> empty .)
+
+
+state 26
+
+    (1) Simulation -> LT SIMULATION GT M A A LT DIV . SIMULATION GT
+
+    SIMULATION      shift and go to state 33
+
+
+state 27
+
+    (2) M -> LT MAP GT MapDetail LT DIV . MAP GT
+
+    MAP             shift and go to state 34
+
+
+state 28
+
+    (3) MapDetail -> ROW EQ NUMERIC . SEMICOLOM MapDetail
+
+    SEMICOLOM       shift and go to state 35
+
+
+state 29
+
+    (4) MapDetail -> COL EQ NUMERIC . SEMICOLOM MapDetail
+
+    SEMICOLOM       shift and go to state 36
+
+
+state 30
+
+    (6) A -> LT ARMY GT ArmyDetail LT . DIV ARMY GT
+
+    DIV             shift and go to state 37
+
+
+state 31
+
+    (7) ArmyDetail -> ARMY_name EQ . NUMERIC SEMICOLOM ArmyDetail
+
+    NUMERIC         shift and go to state 38
+
+
+state 32
+
+    (8) ArmyDetail -> AMOUNT EQ . NUMERIC SEMICOLOM ArmyDetail
+
+    NUMERIC         shift and go to state 39
+
+
+state 33
+
+    (1) Simulation -> LT SIMULATION GT M A A LT DIV SIMULATION . GT
+
+    GT              shift and go to state 40
+
+
+state 34
+
+    (2) M -> LT MAP GT MapDetail LT DIV MAP . GT
+
+    GT              shift and go to state 41
+
+
+state 35
+
+    (3) MapDetail -> ROW EQ NUMERIC SEMICOLOM . MapDetail
+    (3) MapDetail -> . ROW EQ NUMERIC SEMICOLOM MapDetail
+    (4) MapDetail -> . COL EQ NUMERIC SEMICOLOM MapDetail
+    (5) MapDetail -> . empty
+    (10) empty -> .
+
+    ROW             shift and go to state 14
+    COL             shift and go to state 15
+    LT              reduce using rule 10 (empty -> .)
+
+    MapDetail                      shift and go to state 42
+    empty                          shift and go to state 16
+
+state 36
+
+    (4) MapDetail -> COL EQ NUMERIC SEMICOLOM . MapDetail
+    (3) MapDetail -> . ROW EQ NUMERIC SEMICOLOM MapDetail
+    (4) MapDetail -> . COL EQ NUMERIC SEMICOLOM MapDetail
+    (5) MapDetail -> . empty
+    (10) empty -> .
+
+    ROW             shift and go to state 14
+    COL             shift and go to state 15
+    LT              reduce using rule 10 (empty -> .)
+
+    MapDetail                      shift and go to state 43
+    empty                          shift and go to state 16
+
+state 37
+
+    (6) A -> LT ARMY GT ArmyDetail LT DIV . ARMY GT
+
+    ARMY            shift and go to state 44
+
+
+state 38
+
+    (7) ArmyDetail -> ARMY_name EQ NUMERIC . SEMICOLOM ArmyDetail
+
+    SEMICOLOM       shift and go to state 45
+
+
+state 39
+
+    (8) ArmyDetail -> AMOUNT EQ NUMERIC . SEMICOLOM ArmyDetail
+
+    SEMICOLOM       shift and go to state 46
+
+
+state 40
+
+    (1) Simulation -> LT SIMULATION GT M A A LT DIV SIMULATION GT .
+
+    $end            reduce using rule 1 (Simulation -> LT SIMULATION GT M A A LT DIV SIMULATION GT .)
+
+
+state 41
+
+    (2) M -> LT MAP GT MapDetail LT DIV MAP GT .
+
+    LT              reduce using rule 2 (M -> LT MAP GT MapDetail LT DIV MAP GT .)
+
+
+state 42
+
+    (3) MapDetail -> ROW EQ NUMERIC SEMICOLOM MapDetail .
+
+    LT              reduce using rule 3 (MapDetail -> ROW EQ NUMERIC SEMICOLOM MapDetail .)
+
+
+state 43
+
+    (4) MapDetail -> COL EQ NUMERIC SEMICOLOM MapDetail .
+
+    LT              reduce using rule 4 (MapDetail -> COL EQ NUMERIC SEMICOLOM MapDetail .)
+
+
+state 44
+
+    (6) A -> LT ARMY GT ArmyDetail LT DIV ARMY . GT
+
+    GT              shift and go to state 47
+
+
+state 45
+
+    (7) ArmyDetail -> ARMY_name EQ NUMERIC SEMICOLOM . ArmyDetail
+    (7) ArmyDetail -> . ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail
+    (8) ArmyDetail -> . AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail
+    (9) ArmyDetail -> . empty
+    (10) empty -> .
+
+    ARMY_name       shift and go to state 23
+    AMOUNT          shift and go to state 24
+    LT              reduce using rule 10 (empty -> .)
+
+    ArmyDetail                     shift and go to state 48
+    empty                          shift and go to state 25
+
+state 46
+
+    (8) ArmyDetail -> AMOUNT EQ NUMERIC SEMICOLOM . ArmyDetail
+    (7) ArmyDetail -> . ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail
+    (8) ArmyDetail -> . AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail
+    (9) ArmyDetail -> . empty
+    (10) empty -> .
+
+    ARMY_name       shift and go to state 23
+    AMOUNT          shift and go to state 24
+    LT              reduce using rule 10 (empty -> .)
+
+    ArmyDetail                     shift and go to state 49
+    empty                          shift and go to state 25
+
+state 47
+
+    (6) A -> LT ARMY GT ArmyDetail LT DIV ARMY GT .
+
+    LT              reduce using rule 6 (A -> LT ARMY GT ArmyDetail LT DIV ARMY GT .)
+
+
+state 48
+
+    (7) ArmyDetail -> ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail .
+
+    LT              reduce using rule 7 (ArmyDetail -> ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail .)
+
+
+state 49
+
+    (8) ArmyDetail -> AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail .
+
+    LT              reduce using rule 8 (ArmyDetail -> AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail .)
+

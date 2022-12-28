@@ -1,4 +1,4 @@
-<Simulation> 
+<Sim> 
     <Map>
         row = 5;
         col = 5;
@@ -11,7 +11,8 @@
         army_name = 2;
         amount = 5;
     </Army>
-</Simulation>
+</Sim>
+
 
 
 

@@ -4,23 +4,23 @@ from lexer import *
 
 
 def p_simulation(p):  # S -> <Simulation> MAA </Simulation>
-    '''Simualation : CmpOp.Lt Simulation CmpOp.Gt Map Army Army CmpOp.Lt AlgebraicOperators.Div Simulation  CmpOp.Gt'''
+    '''Simulation : LT SIMULATION GT M A A LT DIV SIMULATION GT'''
     p[0] = SimulationNode(p[4], p[5], p[6])
 
 
 def p_map(p):  # M -> <Map> MapDetail <Map/>
-    '''M : CmpOp.LT Map CmpOp.Gt MapDetail CmpOp.Lt AlgebraicOperators.Div Map CmpOp.Gt '''
+    '''M : LT MAP GT MapDetail LT DIV MAP GT '''
     p[0] = MapNode(p[4])
 
 
 def p_map_detail_row(p):
-    '''MapDetail : Row.row Equal.Eq Numeric.Int Semicolom.Semicolom MapDetail'''
-    p[0] = [("row", p[3])] + p[5]
+    '''MapDetail : ROW EQ NUMERIC SEMICOLOM MapDetail'''
+    p[0] = [("ROW", p[3])] + p[5]
 
 
 def p_map_detail_col(p):
-    '''MapDetail : Col.col Equal.Eq Numeric.Int Semicolom.Semicolom MapDetail'''
-    p[0] = [("col", p[3])] + p[5]
+    '''MapDetail : COL EQ NUMERIC SEMICOLOM MapDetail'''
+    p[0] = [("COL", p[3])] + p[5]
 
 
 def p_map_detail_eps(p):
@@ -29,35 +29,65 @@ def p_map_detail_eps(p):
 
 
 def p_army(p):
-    # Army -> <Army> ArmyDetail' <Army/>
-    'Army : CmpOp.Lt Army CmpOp.Gt ArmyDetail CmpOp.Lt AlgebraicOperators.Div Army CmpOp.Gt'
+    'A : LT ARMY GT ArmyDetail LT DIV ARMY GT'
     p[0] = ArmyNode(p[4])
 
 
 def p_army_detail_name(p):
-    '''ArmyDetail : ArmyName.am Equal.Eq Numeric.Int Semicolom.Semicolom ArmyDetail'''
-    p[0] = [("army_name", p[3])] + p[5]
+    '''ArmyDetail : ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail'''
+    p[0] = [("ARMY_name", p[3])] + p[5]
 
 
 def p_army_detail_amount(p):
-    '''ArmyDetail : Amount.amount Equal.Eq Numeric.Int Semicolom.Semicolom ArmyDetail '''
-    p[0] = [("amount", p[3])] + p[5]
+    '''ArmyDetail : AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail '''
+    p[0] = [("AMOUNT", p[3])] + p[5]
 
 
 def p_army_detail_eps(p):
-    '''ArmyDetail : empty '''
+    '''ArmyDetail : empty'''
     p[0] = []
 
+
+def p_error(p):
+    print("Syntax error in input!")
+
+
+def p_empty(p):
+    'empty :'
+    pass
 
 # file = open("dsl/test.txt", 'r')
 # text = file.read()
 # file.close()
 
 
-# my_lexe = Lexer()
 # TOKENS = my_lexe.tokenize_text(text)
-
+# lexer = lex.lex()
 parser = yacc()
+result = parser.parse(
+    " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army></Sim>")
+print(result)
+
+# while True:
+
+#     s = '''
+#         <Sim>
+#             <Map>
+#                 row = 5;
+#                 col = 5;
+#             </Map>
+#             <Army>
+#                 army_name = 1;
+#                 amount = 5;
+#             </Army>
+#             <Army>
+#                 army_name = 2;
+#                 amount = 5;
+#             </Army>
+#         </Sim>
+#         '''
+#     result = parser.parse(s)
+#     print(result)
 # # ast = parser.parse()
 # # print(TOKENS)
 
