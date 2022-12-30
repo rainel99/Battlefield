@@ -26,7 +26,6 @@ tokens = (
 
 t_PLUS = r'\+'
 t_MINUS = r'-'
-# t_NUMERIC = r'\d+'
 t_EQEQ = r'=='
 t_GTE = r'>='
 t_LTE = r'<='
@@ -58,6 +57,8 @@ reserved = {
     "Sim": "SIMULATION",
     "Army": "ARMY",
     "Map": "MAP",
+    "return": "RETURN",
+    "func": "FUNC",
 }
 
 

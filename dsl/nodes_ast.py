@@ -25,3 +25,9 @@ class MapNode(AstNodeChildren):
 class ArmyNode(AstNodeChildren):
     def __init__(self, *args) -> None:
         super().__init__(*args)
+
+
+class FuncNode(AstNodeChildren):  # no terminado
+    def __init__(self, id, *args) -> None:
+        super().__init__(*args)
+        self.Id = id
