@@ -1,4 +1,5 @@
 
+from sympy import false
 import characteristics_of_soldiers
 import statistics as stat
 import random
@@ -103,6 +104,7 @@ class Soldier():
                         self.fight_to(map.battlefield[i][j])
                         found_oponent = True
                         break
+        return False  # check
 
     def fight_to(self, other_soldier):
         #! mellar el arma
@@ -156,10 +158,13 @@ class Soldier():
             return age
 
     def return_to_camp(self, map):
-        for camp in self.camp.n_cells:
-            if map.get_battlefield()[camp[0]][camp[1]] == None:
-                self.move_soldier(camp[0], camp[1], map.get_battlefield())
-                print("REGRESE AL CAMPAMENTO")
+        for c in self.camp.n_cells:
+            temp = map.get_battlefield()
+            a = temp[c[0]][c[1]]
+            if map.get_battlefield()[c[0]][c[1]] == None:
+                self.move_soldier(c[0], c[1], map.get_battlefield())
+                print("REGRESE AL CAMPAMENTO ", c[0], c[1])
+                break
 
 
 def create_soldier(amount_of_soldier, army, map):
