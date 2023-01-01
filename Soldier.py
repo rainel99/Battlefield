@@ -5,9 +5,9 @@ import random
 from typing import List
 from Battlefield import Camp, Map
 import armors
+from goap.base_agent import Agent
 
-
-class Soldier():
+class Soldier(Agent):
     """
     Clase soldado.
     """

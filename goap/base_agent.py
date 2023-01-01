@@ -1,4 +1,4 @@
-from goap_astar import Planner, Action_List
+from goap.goap_astar import Planner, Action_List
 
 class Agent:  # Clase base para los agentes
     def __init__(self, *keys):
