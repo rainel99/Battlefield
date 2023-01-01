@@ -85,13 +85,6 @@ class GeneticALgorithm:
             index = np.random.choice(range(len(parent1)))
             children = [parent2[:index] + parent1[index:],
                         parent1[:index] + parent2[index:]]
-        # elif crossover_type == 'uniform':
-        #     parents = list(zip(*[parent1, parent2]))
-        #     children1 = tuple([np.random.choice(element)
-        #                       for element in parents])
-        #     children2 = tuple([np.random.choice(element)
-        #                       for element in parents])
-        #     children = [children1, children2]
         else:
             pass
         return children
@@ -112,6 +105,9 @@ class GeneticALgorithm:
                 children.append(self.crossover(
                     new_population[i], new_population[i+1], 'one_point'))
             generation += 1
+        with open('gen.txt', 'wb') as fh:
+            pickle.dump(children[0], fh)
+            fh.close()
         return children[0]
 
 
