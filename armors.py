@@ -104,3 +104,23 @@ def dress_army(solider_list, price, min_price):
     for i, ar in enumerate(arms):
         solider_list[i].armor = ar
         solider_list[i].use_armor()
+
+
+def dress_army_variant_b(soldier_list, armors_amount, armors):
+    index = 0
+    index_arm = 0
+    ar = armors[index_arm]
+    amount = armors_amount[index_arm][1]
+    while True:
+        soldier_list[index].armor = ar
+        soldier_list[index].use_armor()
+        index += 1
+        if index >= len(soldier_list):
+            break
+        amount -= 1
+        if amount == 0:
+            index_arm += 1
+            if index_arm == len(armors):
+                break
+            amount = armors_amount[index_arm][1]
+            ar = armors[index_arm]

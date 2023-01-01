@@ -18,5 +18,7 @@
 
 
 
+poner q coda golpe se melle el arma, q esto se acmule
+hay q testear q para mapas mas grandes si creen mas campamentos y que la asignacion de los soldados a los camps funcione
 
 

@@ -1,13 +1,11 @@
 
-import armors
-from Battlefield import Camp, Map
-from Battlefield import Map
-from sympy import re
+from sympy import false
 import characteristics_of_soldiers
 import statistics as stat
 import random
 from typing import List
-from typing_extensions import Self
+from Battlefield import Camp, Map
+import armors
 
 
 class Soldier():
@@ -77,6 +75,12 @@ class Soldier():
     def use_armor(self):
         self.armor.dress_soldier(self)
 
+    def restore_stats(self):
+        self.attack = 60
+        self.life_points = 250
+        self.energy_regen = 35
+        self.weapon_life = 150
+
     def attack_strategy_one(self, map):
         """
         Este metodo recibe el mapa del terreno y busca si en el rango de ataque de este soldado hay
@@ -97,19 +101,23 @@ class Soldier():
                     break
                 if map.battlefield[i][j]:
                     if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
-                        self.fight_to(map.battlefield[i][j], map)
+                        self.fight_to(map.battlefield[i][j])
                         found_oponent = True
                         break
+        return False  # check
 
     def fight_to(self, other_soldier):
         #! mellar el arma
         self.weapon_life -= 25
+        if self.weapon_life <= 0:
+            self.attack = 0
+            return
         #! tener en cuenta el critico y temate_supp
         crit = 0
         if self.get_crit() > 0:
             temp = random.random()
             if temp < self.get_crit():
-                # print("viene critico!")
+                #print("viene critico!")
                 crit = self.get_attack()
         if other_soldier.defense <= 0:
             other_soldier.life_points -= self.get_attack() + crit
@@ -149,19 +157,14 @@ class Soldier():
             self.age = int(age[0])
             return age
 
-    def solider_age(self, mean=-1, var=-1) -> int:
-        if mean == -1:
-            mean = 32
-        if var == -1:
-            var = 12
-        v = stat.NormalDist(mean, var)
-        age = v.samples(1)
-        if age[0] < 15:
-            self.solider_age(mean, var)
-        else:
-            # print(str(int(age[0]))," ++++")
-            self.age = int(age[0])
-            return age
+    def return_to_camp(self, map):
+        for c in self.camp.n_cells:
+            temp = map.get_battlefield()
+            a = temp[c[0]][c[1]]
+            if map.get_battlefield()[c[0]][c[1]] == None:
+                self.move_soldier(c[0], c[1], map.get_battlefield())
+                print("REGRESE AL CAMPAMENTO ", c[0], c[1])
+                break
 
 
 def create_soldier(amount_of_soldier, army, map):

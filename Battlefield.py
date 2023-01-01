@@ -1,9 +1,10 @@
 import random as rd
 from matplotlib import pyplot, colors
+from pyparsing import restOfLine
 
 
 class Map():
-    def __init__(self, rows, cols) -> None:
+    def __init__(self, rows, cols, visits) -> None:
         """_summary_
         Clase para representar el campo de batalla de la simulacion.
         Args:
@@ -12,11 +13,13 @@ class Map():
         """
         self.rows = rows
         self.cols = cols
-        self.battlefield = [[None for _ in range(rows)] for _ in range(cols)]
+        self.battlefield = [[None for _ in range(cols)] for _ in range(rows)]
         self.camps_for_army = 1
         self.camps: list[Camp] = []
-        self.create_camps(self.camps_for_army, 'A')
-        self.create_camps(self.camps_for_army, 'B')
+        self.create_camps(self.camps_for_army, 'A', visits)
+        self.create_camps(self.camps_for_army, 'B', visits)
+        self.camps[0].n_cells = nearby_cells(self.camps[0], self)
+        self.camps[1].n_cells = nearby_cells(self.camps[1], self)
 
     def get_camps(self):
         return self.camps
@@ -102,10 +105,10 @@ class Map():
                     if self.battlefield[i][j].life_points <= 0:
                         self.battlefield[i][j] = None
 
-    def create_camps(self, camp_amount, army):
+    def create_camps(self, camp_amount, army, visits):
         while camp_amount > 0:
             pos_x, pos_y = self.get_free_cell(army)
-            self.battlefield[pos_x][pos_y] = Camp(army, pos_x, pos_y)
+            self.battlefield[pos_x][pos_y] = Camp(army, pos_x, pos_y, visits)
             camp_amount -= 1
             self.camps.append(self.battlefield[pos_x][pos_y])
             print(f"campamento creado en {pos_x, pos_y}")
@@ -113,17 +116,38 @@ class Map():
 
 class Camp(object):
 
-    def __init__(self, army, pos_x, pos_y) -> None:
+    def __init__(self, army, pos_x, pos_y, visits) -> None:
         self.army = army
         self.pos_x = pos_x
         self.pos_y = pos_y
-        self.visits = rd.randint(0, 15)
+        self.visits = visits
         self.state = True  # variable para saber si continua permitiendo visitas
+        self.n_cells = []
 
     def dec_visit(self):
         self.visits -= 1
         if self.visits == 0:
             self.state = False
+            print("CAMPAMENTO AGOTADO")
 
     def __repr__(self) -> str:
-        return f'{type(self).__name__}s'
+        return "C"
+
+
+def fix_weapons_and_restore_stats(camp, map):
+    for pos in camp.n_cells:
+        if map.get_battlefield()[pos[0]][pos[1]] != None and map.get_battlefield()[pos[0]][pos[1]].army == camp.army:
+            map.get_battlefield()[pos[0]][pos[1]].restore_stats()
+
+
+def nearby_cells(camp, map):
+    result = []
+    if (camp.pos_x + 1) < map.get_row():
+        result.append((camp.pos_x + 1, camp.pos_y))
+    if (camp.pos_x - 1) >= 0:
+        result.append((camp.pos_x - 1, camp.pos_y))
+    if (camp.pos_y + 1) < map.get_col():
+        result.append((camp.pos_x, camp.pos_y + 1))
+    if (camp.pos_y - 1) >= 0:
+        result.append((camp.pos_x, camp.pos_y - 1))
+    return result
