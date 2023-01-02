@@ -58,30 +58,18 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
             actions = soldier.calculate()
             for action in actions:    
                 soldier.actionDict[action['name']](soldier,map)
-            
-        # for soldier in soldiers:
-        #     if soldier.weapon_life <= 0:
-        #         if soldier.camp.state == True:
-        #             soldier.return_to_camp(map)
-        #             continue
-        #     else:
-        #         attacked = soldier.attack_strategy_one(map)
-        #         if not attacked:
-        #             next_pos = auxiliar.bfs(map.get_battlefield(), soldier)
-        #             if next_pos != None:
-        #                 # !!!!! aqui voy a cambiar cosas pa q si tienen energia se muevan, sino de un pasito nama
-        #                 spend_energy = soldier.use_energy(next_pos)
-        #                 if soldier.get_energy() - spend_energy >= 0:
-        #                     soldier.move_soldier(
-        #                         next_pos[0], next_pos[1], map.get_battlefield())
+                remove_soldier_form_list(soldiers, army_a, army_b)
+       #######
+       #######
+       #Hacer lo de la energia
+       #######
+       #######
         if rounds % 5 == 0:
             print_map(map)
         print('\n')
-        remove_soldier_form_list(soldiers, army_a, army_b)
+       
         map.remove_fallen_soldiers()
-        # if len(army_a) <= len(army_b)*0.3  or len(army_b) <= len(army_a)*0.3:   ## revisar esto bien
-        #     #print("No se acabo x las rondas de simulacion")
-        #     break
+
         if len(army_a) == 0 or len(army_b) == 0:
             break
         soldier_energy(soldiers)
@@ -167,7 +155,7 @@ def check_possition(soldiers, camps, map):
                 map.battlefield[sol.get_pos_x()][sol.get_pos_y()] = sol
 
 
-start_simulation(10, 10, 5, 5, 100)
+start_simulation(20, 20, 5, 5, 100)
 
 # n = 0
 # while (n < 20):

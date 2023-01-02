@@ -111,14 +111,17 @@ class Soldier(Agent):
                 if i >= map.get_row() or j >= map.get_col():
                     continue
                 if map.battlefield[i][j]:
-                    if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
-                        return True, map.battlefield[i][j]
+                    if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army:
+                        return True, map.battlefield[i][j] 
+                    
         return False, None
     
     def fight_to(self, map):
 
         #hallar el oponente
         other_soldier = self.found_oponent(map)[1]
+        if other_soldier is None:
+            other_soldier = self.found_oponent(map)[1]
         #! mellar el arma
     
         self.weapon_life -= 25
