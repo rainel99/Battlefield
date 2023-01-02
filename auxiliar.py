@@ -14,6 +14,7 @@ def fix_axes(iterations, soldiers_A, soldiers_B):
 
 
 def bfs(map, soldier):
+    map = map.get_battlefield()
     visit_complete = []
     my_queue = []
     current_node = (soldier.get_pos_x(), soldier.get_pos_y())
@@ -26,7 +27,7 @@ def bfs(map, soldier):
             new_row = current_node[0] + directions_row[i]
             new_col = current_node[1] + directions_col[i]
             if in_range(new_row, new_col, len(map), len(map[0])) and (new_row, new_col) not in visit_complete and (new_row, new_col) not in my_queue:
-                if map[new_row][new_col] != None and map[new_row][new_col].army != soldier.army and current_node != initial_pos:
+                if map[new_row][new_col] != None and map[new_row][new_col].army != soldier.army and current_node != initial_pos and map[new_row][new_col].__str__()  != "C":
                     return current_node
                 if map[new_row][new_col] == None:
                     my_queue.append((new_row, new_col))
