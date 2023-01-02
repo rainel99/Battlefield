@@ -58,7 +58,8 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
             actions = soldier.calculate()
             for action in actions:    
                 soldier.actionDict[action['name']](soldier,map)
-                remove_soldier_form_list(soldiers, army_a, army_b)
+                
+        remove_soldier_form_list(soldiers, army_a, army_b)
        #######
        #######
        #Hacer lo de la energia
@@ -88,6 +89,7 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds):
     # print(map.battlefield)
     # print(rounds)
     print_map(map)
+    return soldiers
 
 
 def remove_soldier_form_list(soldiers, army_a, army_b):
