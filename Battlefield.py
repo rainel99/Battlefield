@@ -1,5 +1,6 @@
 import random as rd
 from matplotlib import pyplot, colors
+from pyparsing import restOfLine
 
 
 class Map():
@@ -147,6 +148,6 @@ def nearby_cells(camp, map):
         result.append((camp.pos_x - 1, camp.pos_y))
     if (camp.pos_y + 1) < map.get_col():
         result.append((camp.pos_x, camp.pos_y + 1))
-    if (camp.pos_y + 1) > 0:
+    if (camp.pos_y - 1) >= 0:
         result.append((camp.pos_x, camp.pos_y - 1))
     return result

@@ -1,4 +1,5 @@
 
+from sympy import false
 import characteristics_of_soldiers
 import statistics as stat
 import random
