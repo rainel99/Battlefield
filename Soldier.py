@@ -91,20 +91,18 @@ class Soldier(Agent):
         Args:
             map (Map): Mapa de la simualcion
         """
-        if self.weapon_life <= 0:#sin terminar
+        if self.weapon_life <= 0:
             self.set_start_state(in_camp=False, unarmed=True, fighting=False, looking_enemy = False)
             self.set_goal_state(unarmed=False)
-            return
         elif self.found_oponent(map)[0]:
             self.planner.set_start_state(in_camp=False, unarmed=False, fighting=False, looking_enemy = True)
-            return
         else:
             self.planner.set_start_state(in_camp=False, unarmed=False, fighting=False, looking_enemy = False)
-            return
+
         
     
     def found_oponent(self, map):# Retorna tupla de si existe el oponente y su posicion
-
+        
         for i in  range(self.get_pos_x() - self.get_range_attack(), self.get_pos_x() + self.get_range_attack() + 1):
             for j in range(self.pos_y - self.get_range_attack(), self.pos_y + self.get_range_attack()):
                 if i < 0 or j < 0:
@@ -112,7 +110,8 @@ class Soldier(Agent):
                 if i >= map.get_row() or j >= map.get_col():
                     continue
                 if map.battlefield[i][j]:
-                    if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army:
+                    a = map.battlefield[i][j]
+                    if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
                         return True, map.battlefield[i][j] 
                     
         return False, None
@@ -122,7 +121,7 @@ class Soldier(Agent):
         #hallar el oponente
         other_soldier = self.found_oponent(map)[1]
         if other_soldier is None:
-            other_soldier = self.found_oponent(map)[1]
+            return #! no hay oponente alcanzable 
         #! mellar el arma
     
         self.weapon_life -= 25
@@ -152,7 +151,6 @@ class Soldier(Agent):
             battlefield[self.pos_x][self.pos_y] = None  # Desface
         self.pos_x = pos_x
         self.pos_y = pos_y
-        
     def move_soldier(self,map):
         next_pos = auxiliar.bfs(map, self)
         if next_pos != None:
