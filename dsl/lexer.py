@@ -59,6 +59,10 @@ reserved = {
     "Map": "MAP",
     "return": "RETURN",
     "func": "FUNC",
+    "return": "RETURN",
+    "print": "PRINT",
+    "true": "TRUE",
+    "false": "FALSE"
 }
 
 

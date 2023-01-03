@@ -1,3 +1,4 @@
+from turtle import left
 import ply.yacc as yacc
 
 
@@ -27,7 +28,28 @@ class ArmyNode(AstNodeChildren):
         super().__init__(*args)
 
 
+class ExpressionNode(AstNode):
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class AssignNode(ExpressionNode):
+    def __init__(self, type_, id, value) -> None:
+        self.type_ = type_
+        self.id = id
+        self.value = value
+
+
+class BinaryExpNode(ExpressionNode):
+    def __init__(self, left, operator, right) -> None:
+        self.left = left
+        self.operator = operator
+        self.right = right
+
+
 class FuncNode(AstNodeChildren):  # no terminado
-    def __init__(self, id, *args) -> None:
-        super().__init__(*args)
+    def __init__(self, id, params, block) -> None:
+        super().__i
         self.Id = id
+        self.params = params
+        self.block = block

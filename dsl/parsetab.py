@@ -6,7 +6,7 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'AMOUNT AND ARMY ARMY_name CKEY CLP COL COMMA DIV DOT EQ EQEQ GT GTE ID IF LT LTE MAP MINUS NOR NOTEQ NUMERIC OKEY OPP OR PLUS ROW SEMICOLOM SIMULATION STAR WHILESimulation : LT SIMULATION GT M A A LT DIV SIMULATION GTM : LT MAP GT MapDetail LT DIV MAP GT MapDetail : ROW EQ NUMERIC SEMICOLOM MapDetailMapDetail : COL EQ NUMERIC SEMICOLOM MapDetailMapDetail : empty A : LT ARMY GT ArmyDetail LT DIV ARMY GTArmyDetail : ARMY_name EQ NUMERIC SEMICOLOM ArmyDetailArmyDetail : AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail ArmyDetail : emptyempty :'
+_lr_signature = 'AMOUNT AND ARMY ARMY_name CKEY CLP COL COMMA DIV DOT EQ EQEQ FUNC GT GTE ID IF LT LTE MAP MINUS NOR NOTEQ NUMERIC OKEY OPP OR PLUS RETURN ROW SEMICOLOM SIMULATION STAR WHILESimulation : LT SIMULATION GT M A A LT DIV SIMULATION GTM : LT MAP GT MapDetail LT DIV MAP GT MapDetail : ROW EQ NUMERIC SEMICOLOM MapDetailMapDetail : COL EQ NUMERIC SEMICOLOM MapDetailMapDetail : empty A : LT ARMY GT ArmyDetail LT DIV ARMY GTArmyDetail : ARMY_name EQ NUMERIC SEMICOLOM ArmyDetailArmyDetail : AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail ArmyDetail : emptyempty :'
     
 _lr_action_items = {'LT':([0,4,6,9,10,12,13,16,17,22,25,35,36,41,42,43,45,46,47,48,49,],[2,5,8,8,-10,18,19,-5,-10,30,-9,-10,-10,-2,-3,-4,-10,-10,-6,-7,-8,]),'$end':([1,40,],[0,-1,]),'SIMULATION':([2,26,],[3,33,]),'GT':([3,7,11,33,34,44,],[4,10,17,40,41,47,]),'MAP':([5,27,],[7,34,]),'ARMY':([8,37,],[11,44,]),'ROW':([10,35,36,],[14,14,14,]),'COL':([10,35,36,],[15,15,15,]),'EQ':([14,15,23,24,],[20,21,31,32,]),'ARMY_name':([17,45,46,],[23,23,23,]),'AMOUNT':([17,45,46,],[24,24,24,]),'DIV':([18,19,30,],[26,27,37,]),'NUMERIC':([20,21,31,32,],[28,29,38,39,]),'SEMICOLOM':([28,29,38,39,],[35,36,45,46,]),}
 
@@ -36,5 +36,5 @@ _lr_productions = [
   ('ArmyDetail -> ARMY_name EQ NUMERIC SEMICOLOM ArmyDetail','ArmyDetail',5,'p_army_detail_name','grammar.py',37),
   ('ArmyDetail -> AMOUNT EQ NUMERIC SEMICOLOM ArmyDetail','ArmyDetail',5,'p_army_detail_amount','grammar.py',42),
   ('ArmyDetail -> empty','ArmyDetail',1,'p_army_detail_eps','grammar.py',47),
-  ('empty -> <empty>','empty',0,'p_empty','grammar.py',56),
+  ('empty -> <empty>','empty',0,'p_empty','grammar.py',60),
 ]

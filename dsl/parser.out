@@ -8,6 +8,7 @@ Unused terminals:
     COMMA
     DOT
     EQEQ
+    FUNC
     GTE
     ID
     IF
@@ -19,6 +20,7 @@ Unused terminals:
     OPP
     OR
     PLUS
+    RETURN
     STAR
     WHILE
 
@@ -50,6 +52,7 @@ DIV                  : 1 2 6
 DOT                  : 
 EQ                   : 3 4 7 8
 EQEQ                 : 
+FUNC                 : 
 GT                   : 1 1 2 2 6 6
 GTE                  : 
 ID                   : 
@@ -65,6 +68,7 @@ OKEY                 :
 OPP                  : 
 OR                   : 
 PLUS                 : 
+RETURN               : 
 ROW                  : 3
 SEMICOLOM            : 3 4 7 8
 SIMULATION           : 1 1
