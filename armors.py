@@ -1,10 +1,4 @@
 from abc import ABCMeta, abstractmethod
-# def mi_decorador(funcion_original):
-#     def funcion_envolvente(*args, **kwargs):
-#         print("Código antes de la funcion_original()")
-#         funcion_original(*args, **kwargs)
-#         print("Código después de la funcion_original()")
-#     return funcion_envolvente
 from random import randint
 
 
@@ -20,8 +14,6 @@ class BassicArmor(object):
 
     def __repr__(self) -> str:
         return type(self).__name__
-
-# archer, gladiator, squire, Swordsman,lancers
 
 
 class ArcherArmor(BassicArmor):

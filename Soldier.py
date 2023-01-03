@@ -1,13 +1,14 @@
 
-from sympy import false
 import characteristics_of_soldiers
 import statistics as stat
 import random
 from typing import List
-from Battlefield import Camp, Map
+from Battlefield import Camp
 import armors
 from goap.base_agent import Agent
 import auxiliar
+
+
 class Soldier(Agent):
     """
     Clase soldado.
@@ -15,7 +16,7 @@ class Soldier(Agent):
 
     def __init__(self, pos_x, pos_y, army, *keys) -> None:
         super().__init__(*keys)
-        self.life_points = 250
+        self.life_points = 5000
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.army = army
@@ -92,18 +93,19 @@ class Soldier(Agent):
             map (Map): Mapa de la simualcion
         """
         if self.weapon_life <= 0:
-            self.set_start_state(in_camp=False, unarmed=True, fighting=False, looking_enemy = False)
+            self.set_start_state(in_camp=False, unarmed=True,
+                                 fighting=False, looking_enemy=False)
             self.set_goal_state(unarmed=False)
         elif self.found_oponent(map)[0]:
-            self.planner.set_start_state(in_camp=False, unarmed=False, fighting=False, looking_enemy = True)
+            self.planner.set_start_state(
+                in_camp=False, unarmed=False, fighting=False, looking_enemy=True)
         else:
-            self.planner.set_start_state(in_camp=False, unarmed=False, fighting=False, looking_enemy = False)
+            self.planner.set_start_state(
+                in_camp=False, unarmed=False, fighting=False, looking_enemy=False)
 
-        
-    
-    def found_oponent(self, map):# Retorna tupla de si existe el oponente y su posicion
-        
-        for i in  range(self.get_pos_x() - self.get_range_attack(), self.get_pos_x() + self.get_range_attack() + 1):
+    def found_oponent(self, map):  # Retorna tupla de si existe el oponente y su posicion
+
+        for i in range(self.get_pos_x() - self.get_range_attack(), self.get_pos_x() + self.get_range_attack() + 1):
             for j in range(self.pos_y - self.get_range_attack(), self.pos_y + self.get_range_attack()):
                 if i < 0 or j < 0:
                     continue
@@ -112,18 +114,18 @@ class Soldier(Agent):
                 if map.battlefield[i][j]:
                     a = map.battlefield[i][j]
                     if not isinstance(map.battlefield[i][j], Camp) and map.battlefield[i][j].army != self.army and map.battlefield[i][j].life_points > 0:
-                        return True, map.battlefield[i][j] 
-                    
+                        return True, map.battlefield[i][j]
+
         return False, None
-    
+
     def fight_to(self, map):
 
-        #hallar el oponente
+        # hallar el oponente
         other_soldier = self.found_oponent(map)[1]
         if other_soldier is None:
-            return #! no hay oponente alcanzable 
+            return  # ! no hay oponente alcanzable
         #! mellar el arma
-    
+
         self.weapon_life -= 25
         if self.weapon_life <= 0:
             self.attack = 0
@@ -151,13 +153,11 @@ class Soldier(Agent):
             battlefield[self.pos_x][self.pos_y] = None  # Desface
         self.pos_x = pos_x
         self.pos_y = pos_y
-    def move_soldier(self,map):
+
+    def move_soldier(self, map):
         next_pos = auxiliar.bfs(map, self)
         if next_pos != None:
             self.move_soldier_(next_pos[0], next_pos[1], map.get_battlefield())
-    
-    
-            
 
     def use_energy(self, new_pos):
         dist_manh = abs(self.get_pos_x() -
@@ -184,27 +184,24 @@ class Soldier(Agent):
         for camp in self.camp.n_cells:
             if map.get_battlefield()[camp[0]][camp[1]] == None:
                 self.move_soldier_(camp[0], camp[1], map.get_battlefield())
-                print("REGRESE AL CAMPAMENTO")
-    
+                # print("REGRESE AL CAMPAMENTO")
+
     def restore_weapon(self, map):
-        ## Hacer algo aqui como coger al azar un arma 
+        # Hacer algo aqui como coger al azar un arma
         self.attack = 60
         self.weapon_life = 100
-        self.set_start_state(in_camp=True, unarmed=False, fighting=False, looking_enemy = False)
+        self.set_start_state(in_camp=True, unarmed=False,
+                             fighting=False, looking_enemy=False)
         self.set_goal_state(fighting=True)
 
-    
-
-
-    actionDict ={ #! diccionario de acciones mapea las condiciones a los metodos correspondientes
+    actionDict = {  # ! diccionario de acciones mapea las condiciones a los metodos correspondientes
         'move_to_camp': return_to_camp,
-        'figth' : fight_to,
+        'figth': fight_to,
         'move': move_soldier,
-        'obtain_weapon' : restore_weapon,
+        'obtain_weapon': restore_weapon,
     }
 
 
-    
 def create_soldier(amount_of_soldier, army, map):
     """_summary_
 
@@ -219,21 +216,24 @@ def create_soldier(amount_of_soldier, army, map):
     soldiers = []
     for _ in range(amount_of_soldier):
         pos_x, pos_y = map.get_free_cell(army)
-        if pos_x == None and pos_y == None:
+        if pos_x == None or pos_y == None:
             return -1
-        temp = Soldier(pos_x, pos_y, army,'in_camp','unarmed','fighting','looking_enemy')
+        temp = Soldier(pos_x, pos_y, army, 'in_camp',
+                       'unarmed', 'fighting', 'looking_enemy')
 
-        
-        temp.set_start_state(in_camp=False, unarmed=False, fighting=False, looking_enemy = False)
+        temp.set_start_state(in_camp=False, unarmed=False,
+                             fighting=False, looking_enemy=False)
         temp.set_goal_state(fighting=True)
-        temp.add_condition('move_to_camp', in_camp=False, unarmed = True)
+        temp.add_condition('move_to_camp', in_camp=False, unarmed=True)
         temp.add_reaction('move_to_camp', in_camp=True)
-        temp.add_condition('figth', unarmed=False, fighting=False, looking_enemy = True)
+        temp.add_condition('figth', unarmed=False,
+                           fighting=False, looking_enemy=True)
         temp.add_reaction('figth', fighting=True)
-        temp.add_condition('move', unarmed=False, fighting=False, looking_enemy = False)
+        temp.add_condition('move', unarmed=False,
+                           fighting=False, looking_enemy=False)
         temp.add_reaction('move', looking_enemy=True)
-        temp.add_condition('obtain_weapon',in_camp = True)
-        temp.add_reaction('obtain_weapon', unarmed = False)
+        temp.add_condition('obtain_weapon', in_camp=True)
+        temp.add_reaction('obtain_weapon', unarmed=False)
         temp.set_action_list()
 
         v_a = characteristics_of_soldiers.Experience()
