@@ -1,3 +1,4 @@
+from re import T
 import ply.lex as lex
 
 tokens = (
@@ -21,9 +22,10 @@ tokens = (
     'DOT',
     'SEMICOLOM',
     'ID',
+    'NOT',
 )
 
-
+t_NOT = r'\!'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_EQEQ = r'=='
@@ -34,6 +36,7 @@ t_EQ = r'='
 t_GT = r'>'
 t_LT = r'<'
 t_DIV = r'/'
+t_STAR = r'\*'
 t_OPP = r'\('
 t_CLP = r'\)'
 t_OKEY = r'\{'
@@ -41,6 +44,7 @@ t_CKEY = r'\}'
 t_DOT = r'\.'
 t_COMMA = r'\,'
 t_SEMICOLOM = r';'
+t_NIL = r'NIL'
 ID = r'([a-zA-z])+'
 
 
@@ -49,7 +53,6 @@ reserved = {
     "while": 'WHILE',
     "and": 'AND',
     "or": 'OR',
-    "not": 'NOR',
     "row": 'ROW',
     "col": 'COL',
     "army_name": 'ARMY_name',
@@ -62,7 +65,9 @@ reserved = {
     "return": "RETURN",
     "print": "PRINT",
     "true": "TRUE",
-    "false": "FALSE"
+    "false": "FALSE",
+    "nil": "NIL",
+    "int": "INT",
 }
 
 

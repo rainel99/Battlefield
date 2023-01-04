@@ -1,12 +1,12 @@
 from ply.yacc import yacc
-from dsl.nodes_ast import AssignNode, FuncNode
+from nodes_ast import *
 from nodes_ast import ArmyNode, MapNode, SimulationNode
 from lexer import *
 
 
 def p_simulation(p):  # S -> <Simulation> MAA </Simulation>
-    '''Simulation : LT SIMULATION GT M A A LT DIV SIMULATION GT'''
-    p[0] = SimulationNode(p[4], p[5], p[6])
+    '''Simulation : LT SIMULATION GT M A A Program LT DIV SIMULATION GT'''
+    p[0] = SimulationNode(p[4], p[5], p[6], p[7])
 
 
 def p_map(p):  # M -> <Map> MapDetail <Map/>
@@ -49,323 +49,314 @@ def p_army_detail_eps(p):
     p[0] = []
 #!a partir de aqui es new
 
+
+def p_program(p):
+    '''Program : Declaration'''
+    p[0] = ProgramNode(p[1])
 # ? DECLARATION
 
 
 def p_declaration_fun(p):  # Declaracion de funcion
-    '''Declaration : FuncDecl'''
+    '''Declaration : FuncDecl '''
+    p[0] = [p[1]]
 
 
 def p_declaration_var(p):  # Declaracion de variable
-    '''Declaration : VarDecl'''
+    '''Declaration : VarDecl '''
+    p[0] = [p[1]]
 
 
 def p_declaration_statement(p):
     '''Declaration : Statement'''  # Declaracion de declarracion XD
+    p[0] = [p[1]]
+
+
+def p_declaration_empty(p):
+    '''Declaration : empty'''
+    p[0] = []
 
 
 def p_var_decl(p):
-    '''VarDecl : VAR ID EQ Expression'''  # Variable
+    '''VarDecl : Type_ ID EQ Expression'''  # Variable #! falta hacer la produccion de los tipos
+    p[0] = VarNode(p[1], p[2], p[4])
+
 
 # ? STATEMENT
 
 
 def p_statement_exp(p):  # Statement -> Expresion
-    '''Statement : ExprStmt'''
+    '''Statement : ExprStmt '''
+    p[0] = p[1]
 
 
 def p_statement_while(p):
     '''Statement : WhileStmt'''  # Statement -> While
+    p[0] = p[1]
 
 
 def p_statement_if(p):
     '''Statement : IfStmt'''  # Statement -> If
+    p[0] = p[1]
 
 
 def p_statement_print(p):
     '''Statement : PrintStmt'''  # Statement -> Print
+    p[0] = p[1]
 
 
 def p_statement_return(p):
     '''Statement : ReturnStmt'''  # Statement -> Return
+    p[0] = p[1]
 
 
 def p_statement_block(p):
     '''Statement : Block'''  # Statement -> Block
+    p[0] = p[1]
 
 
 def p_block(p):
     '''Block : OKEY Declaration CKEY'''  # Block -> Declaracion
+    p[0] = BlockNode(p[1])
 
 
 def p_exp_stmt(p):
     '''ExprStmt : Expression SEMICOLOM'''  # ExpresionSt -> Expresion
+    p[0] = ExpressionNode(p[1])
 
 
 def p_if_stmt(p):
-    '''IfStmt : IF OPP Expression CPP Statement'''  # !duda con el else #IfSt
+    '''IfStmt : IF OPP Expression CLP Statement'''  # !duda con el else #IfSt
+    p[0] = IfNode(p[3], p[5])
 
 
 def p_print_stmt(p):
     '''PrintStmt : PRINT Expression SEMICOLOM'''  # PrintSt
+    p[0] = PrintNode(p[2])
 
 
 def p_return_stmt(p):
     '''ReturnStmt : RETURN Expression SEMICOLOM'''  # ReturnSt
+    p[0] = ReturnNode(p[2])
 
 
 def p_while_stmt(p):
-    '''WhileStmt : WHILE OPP Exprssion CLP Statement'''  # WhileSt
-
+    '''WhileStmt : WHILE OPP Expression CLP Statement'''  # WhileSt
+    p[0] = WhileNode(p[3], p[5])
 # ? EXPRESSION
 
 
 def p_expression(p):  # Expresion
     '''Expression : Assignment'''
+    p[0] = p[1]
 
 
 def p_assignment(p):  # ! Falta hacer type y value #Assign
-    '''Assignment : TYPE ID EQ VALUE'''
+    '''Assignment : Type_ ID EQ Logic_or'''
     p[0] = AssignNode(p[1], p[2], p[4])
 
 
 def p_assignment_logic_or(p):
     '''Assignment : Logic_or'''
+    p[0] = p[1]
 
 
 def p_logic_or(p):
-    '''Logic_or : Logic_and Logic_and_aster'''
+    '''Logic_or : Logic_or OR Logic_and'''
+    p[0] = LogicOrNode(p[1], p[3])
 
 
-def p_logic_and(p):  # And
-    '''Logic_and : Equality Equality_aster'''
+def p_logic_or_(p):
+    '''Logic_or : Logic_and'''
+    p[0] = p[1]
 
 
-def p_logic_and_aster(p):
-    '''Logic_and_aster : OR Logic_and Logic_and_aster'''
+def p_logic_and(p):
+    '''Logic_and : Logic_and AND Equality'''
+    p[0] = LogicaAndNode(p[1], p[3])
 
 
-def p_logic_and_aster_eps(p):
-    '''Logic_and_aster : empty'''
+def p_logic_and_(p):
+    '''Logic_and : Equality'''
+    p[0] = p[1]
 
 
-def p_equality_aster(p):  # Equality
-    '''Equality_aster : AND Equality Equality_aster'''
+def p_equality_eq(p):
+    '''Equality : Equality NOTEQ Comparison'''
+    p[0] = ComparisonNotEqNode(p[1, p[3]])
 
 
-def p_equality_aster_eps(p):
-    '''Equality_aster : empty'''
+def p_equality_noteq(p):
+    '''Equality : Equality EQEQ Comparison'''
+    p[0] = ComparisonNotEqNode(p[1, p[3]])
 
 
-def p_equality_a(p):
-    '''Equality : Comparison Comparison_NOTEQ_aster'''
-
-
-def p_equality_b(p):
-    '''Equality : Comparison Comparison_EQEQ_aster'''
-
-
-def p_comparison_eqeq_aster(p):  # Comparison ==
-    '''Comparison_EQEQ_aster : EQEQ Comparison Comparison_EQEQ_aster'''
-
-
-def p_comparisson_noteq_aster(p):
-    '''Comparison_NOTEQ_aster : NOTEQ Comparison Comparison_NOTEQ_aster'''
-
-
-def p_comparison_eqeq_aster_eps(p):
-    '''Comparison_EQEQ_aster : empty'''
-
-
-def p_comparison_noteq_aster_eps(p):  # Comparison !=
-    '''Comparison_NOTEQ_aster : empty'''
+def p_equality_(p):
+    '''Equality : Comparison'''
+    p[0] = p[1]
 
 
 def p_comparison_gt(p):  # Comparison >
-    '''Comparison : Term Term_GT_aster'''
-
-
-def p_term_gt_aster(p):
-    '''Term_GT_aster : GT Term Term_GT_aster'''
-
-
-def p_term_gt_aster_eps(p):
-    '''Term_GT_aster : empty'''
+    '''Comparison : Comparison GT Term'''
+    p[0] = ComparisonGtNode(p[1], p[3])
 
 
 def p_comparison_lt(p):  # Comparison <
-    '''Comparison : Term Term_LT_aster'''
-
-
-def p_term_lt_aster(p):
-    '''Term_LT_aster : LT Term Term_LT_aster'''
-
-
-def p_term_lt_aster_eps(p):
-    '''Term_LT_aster : empty'''
+    '''Comparison : Comparison LT Term'''
+    p[0] = ComparisonLtNode(p[1], p[3])
 
 
 def p_comparison_lte(p):  # Comparison <=
-    '''Comparison : Term Term_LTE_aster'''
-
-
-def p_term_lte_aster(p):
-    '''Term_LTE_aster : LTE Term Term_LTE_aster'''
-
-
-def p_term_lte_aster_eps(p):
-    '''Term_LTE_aster : empty'''
+    '''Comparison : Comparison LTE Term'''
+    p[0] = ComparisonLteNode(p[1], p[3])
 
 
 def p_comparison_gte(p):  # Comparison >=
-    '''Comparison : Term Term_GTE_aster'''
+    '''Comparison : Comparison GTE Term'''
+    p[0] = ComparisonGteNode(p[1], p[3])
 
 
-def p_term_gte_aster(p):
-    '''Term_GTE_aster : GTE Term Term_GTE_aster'''
+def p_comparison_(p):
+    '''Comparison : Term'''
+    p[0] = p[1]
+# TODO
 
 
-def p_term_gte_aster_eps(p):
-    '''Term_GTE_aster : empty'''
-
-
-def p_fact_minus(p):  # Term -
-    '''Term : Factor Factor_minus_aster'''
-
-
-def p_factor_minus_aster(p):
-    '''Factor_minus_aster : MINUS Factor Factor_Aster'''
-
-
-def p_factor_minus_aster_eps(p):
-    '''Factor_minus_aster : empty'''
+def p_factor_minus(p):  # Term -
+    '''Term : Term MINUS Factor'''
+    p[0] = MinusNode(p[1], p[3])
 
 
 def p_factor_plus(p):
-    '''Term : Factor Factor_plus_aster'''
+    '''Term : Term PLUS Factor'''
+    p[0] = PlusNode(p[1], p[3])
 
 
-def p_factor_plus_aster(p):
-    '''Factor_plus_aster : PLUS Factor Factor_plus_aster'''
+def p_factor_(p):
+    '''Term : Factor'''
+    p[0] = p[1]
 
 
-def p_factor_plus_aster_eps(p):
-    '''Factor_plus_aster : empty'''
-
-
-def p_unary_plus(p):
-    '''Factor : Unary Unary_plus_aster'''
-
-
-def p_unary_plus_aster(p):
-    '''Unary_plus_aster : PLUS Unary Unary_plus_aster'''
-
-
-def p_unary_plus_aster_eps(p):
-    '''Unary_plus_aster : empty'''
+def p_unary_star(p):
+    '''Factor : Factor STAR Unary'''
+    p[0] = StarNode(p[1], p[3])
 
 
 def p_unary_div(p):
-    '''Factor : Unary Unary_div_aster'''
+    '''Factor : Factor DIV Unary'''
+    p[0] = DivNode(p[1], p[3])
 
 
-def p_unary_div_aster(p):
-    '''Unary_div_aster : PLUS Unary Unary_div_aster'''
-
-
-def p_unary_plus_aster_eps(p):
-    '''Unary_div_aster : empty'''
+def p_unary_(p):
+    '''Factor : Unary'''
+    p[0] = p[1]
 
 
 def p_unary_not(p):
     '''Unary : NOT Unary'''
+    p[0] = UnaryNotNode(p[2])
+
+
+def p_unary_minus(p):
+    '''Unary : MINUS Unary'''
+    p[0] = UnaryMinusNode(p[2])
 
 
 def p_unary_call(p):
     '''Unary : Call'''
+    p[0] = p[1]
 
 
 def p_call(p):  # call
-    '''Call : Primary Arguments_aster '''
-
-
-def p_arguments_aster(p):
-    '''Arguments_aster : OPP Arguments CLP'''
+    '''Call : Primary Arguments '''
+    p[0] = CallArgsNode(p[1], p[2])
 
 
 def p_arguments_aster_eps(p):
-    '''Arguments_aster : empty'''
+    '''Arguments : empty'''
+    p[0] = []
 
 
-def p_call_id_aster(p):
-    '''Call : Primary Id_aster'''
+# def p_call_id_aster(p):
+#     '''Call : Primary Id_aster'''
+#     p[0] = CallIdNode(p[1], p[2])
 
 
-def p_id_aster(p):
-    '''Id_aster : DOT ID'''
+# def p_id_aster(p):
+#     '''Id_aster : DOT ID'''
+#     p[0] = p[1]
 
 
-def id_aster_eps(p):
-    '''Id_aster : emptys'''
+# def p_id_aster_eps(p):
+#     '''Id_aster : empty'''
+#     p[0] = []  # ! not sure
 
 
-def primary_true(p):
+def p_primary_true(p):
     '''Primary : TRUE'''
+    p[0] = PrimaryTrueNode(p[1])
 
 
-def primary_false(p):
+def p_primary_false(p):
     '''Primary : FALSE'''
+    p[0] = PrimaryFalseNode(p[1])
 
 
-def primary_false(p):
-    '''Primary : FALSE'''
+def p_primary_number(p):
+    '''Primary : NUMERIC'''
+    p[0] = PrimaryNumberNode(p[1])
 
 
-def primary_number(p):
-    '''Primary : NUMBER'''
+def p_primary_nil(p):
+    '''Primary : NIL'''
+    p[0] = PrimaryNilNode(p[1])
 
-
-def primary_string(p):
-    '''Primary : STRING'''  # ! TNGO Q HACER EL TIPO STRING
+# def primary_string(p):
+#     '''Primary : STRING'''  # ! TNGO Q HACER EL TIPO STRING
 
 
 def p_primary_id(p):
     '''Primary : ID'''
+    p[0] = p[1]
 
 
 def p_primary_expression(p):
-    '''Primary : Expressions'''
+    '''Primary : OPP Expression CLP'''
+    p[0] = ExpressionNode(p[2])  # !duda
 
 
 def p_arguments(p):
     '''Arguments : Expression Expression_aster'''
+    p[0] = [p[1]] + p[2]
 
 
 def p_expression_aster(p):
-    '''Expression_aster : COMMA Expression_aster'''
+    '''Expression_aster : COMMA Expression Expression_aster'''
+    p[0] = p[2] + p[3]
 
 
 def p_expression_aster_eps(p):
-    '''Expression_aster : Empty'''
-
+    '''Expression_aster : empty'''
+    p[0] = []
 #!Function
 
 
 def p_fun_decl(p):
     '''FuncDecl : FUNC Function'''
+    p[0] = p[2]
 
 
 def p_function(p):
     '''Function : ID OPP Params CLP Block '''
-    p[0] = FuncNode(p[1],p[3],p[5])
+    p[0] = FuncNode(p[1], p[3], p[5])
+
 
 def p_params(p):
-    '''Params : TYPE ID ParamsAster'''
+    '''Params : Type_ ID ParamsAster'''
     p[0] = [(p[1], p[2])] + p[3]
 
 
 def p_params_eps(p):
-    '''Params :empty'''
+    '''Params : empty'''
     p[0] = []
 
 
@@ -379,9 +370,11 @@ def p_params_aster_eps(p):
     p[0] = []
 
 
-
-
 #!EndFunction
+
+def p_type_(p):
+    '''Type_ : INT'''
+    p[0] = p[1]
 
 
 def p_error(p):
@@ -399,7 +392,7 @@ def p_empty(p):
 
 # TOKENS = my_lexe.tokenize_text(text)
 # lexer = lex.lex()
-parser = yacc()
+parser = yacc.yacc()
 result = parser.parse(
-    " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army></Sim>")
+    " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army> int a = 5;</Sim>")
 print(result)

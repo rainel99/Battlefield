@@ -11,6 +11,7 @@
         army_name = 2;
         amount = 5;
     </Army>
+    int a = 5;
 </Sim>
 
 
