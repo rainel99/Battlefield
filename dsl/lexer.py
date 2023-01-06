@@ -55,6 +55,7 @@ reserved = {
     "or": 'OR',
     "row": 'ROW',
     "col": 'COL',
+    "else": "ELSE",
     "army_name": 'ARMY_name',
     "amount": 'AMOUNT',
     "Sim": "SIMULATION",

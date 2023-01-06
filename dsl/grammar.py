@@ -50,8 +50,18 @@ def p_army_detail_eps(p):
 #!a partir de aqui es new
 
 
+# def p_program_aster(p):
+#     '''Program_aster : Program Program_aster'''
+#     p[0] = [p[1]] + p[2]
+
+
+# def p_program_eps(p):
+#     '''Program_aster : empty'''
+#     p[0] = []
+
+
 def p_program(p):
-    '''Program : Declaration'''
+    '''Program : Declaration_aster'''
     p[0] = ProgramNode(p[1])
 # ? DECLARATION
 
@@ -67,17 +77,17 @@ def p_declaration_var(p):  # Declaracion de variable
 
 
 def p_declaration_statement(p):
-    '''Declaration : Statement'''  # Declaracion de declarracion XD
+    '''Declaration : Statement'''
     p[0] = [p[1]]
 
 
-def p_declaration_empty(p):
-    '''Declaration : empty'''
-    p[0] = []
+# def p_declaration_empty(p):
+#     '''Declaration : empty'''
+#     p[0] = []
 
 
 def p_var_decl(p):
-    '''VarDecl : Type_ ID EQ Expression'''  # Variable #! falta hacer la produccion de los tipos
+    '''VarDecl : Type_ ID EQ Expression SEMICOLOM'''
     p[0] = VarNode(p[1], p[2], p[4])
 
 
@@ -115,18 +125,38 @@ def p_statement_block(p):
 
 
 def p_block(p):
-    '''Block : OKEY Declaration CKEY'''  # Block -> Declaracion
-    p[0] = BlockNode(p[1])
+    '''Block : OKEY Declaration_aster CKEY'''  # Block -> Declaracion
+    p[0] = BlockNode(p[2])
+
+
+def p_block_decl_aster(p):
+    '''Declaration_aster : Declaration Declaration_aster'''
+    p[0] = p[1] + p[2]
+
+
+def p_block_decl_aster_eps(p):
+    '''Declaration_aster : empty'''
+    p[0] = []
 
 
 def p_exp_stmt(p):
     '''ExprStmt : Expression SEMICOLOM'''  # ExpresionSt -> Expresion
-    p[0] = ExpressionNode(p[1])
+    p[0] = p[1]
 
 
 def p_if_stmt(p):
-    '''IfStmt : IF OPP Expression CLP Statement'''  # !duda con el else #IfSt
-    p[0] = IfNode(p[3], p[5])
+    '''IfStmt : IF OPP Expression CLP Statement Else_aster'''  # !duda con el else #IfSt
+    p[0] = IfNode(p[3], p[5], p[6])
+
+
+def p_else(p):
+    '''Else_aster : ELSE Statement'''
+    p[0] = ElseNode(p[2])
+
+
+def p_else_eps(p):
+    '''Else_aster : empty'''
+    p[0] = None
 
 
 def p_print_stmt(p):
@@ -150,7 +180,12 @@ def p_expression(p):  # Expresion
     p[0] = p[1]
 
 
-def p_assignment(p):  # ! Falta hacer type y value #Assign
+def p_assignment_(p):
+    '''Assignment : ID EQ Logic_or'''
+    p[0] = AssignNode_(p[1], p[3])
+
+
+def p_assignment(p):
     '''Assignment : Type_ ID EQ Logic_or'''
     p[0] = AssignNode(p[1], p[2], p[4])
 
@@ -182,12 +217,12 @@ def p_logic_and_(p):
 
 def p_equality_eq(p):
     '''Equality : Equality NOTEQ Comparison'''
-    p[0] = ComparisonNotEqNode(p[1, p[3]])
+    p[0] = ComparisonNotEqNode(p[1], p[3])
 
 
 def p_equality_noteq(p):
     '''Equality : Equality EQEQ Comparison'''
-    p[0] = ComparisonNotEqNode(p[1, p[3]])
+    p[0] = ComparisonEqEqNode(p[1], p[3])
 
 
 def p_equality_(p):
@@ -218,7 +253,6 @@ def p_comparison_gte(p):  # Comparison >=
 def p_comparison_(p):
     '''Comparison : Term'''
     p[0] = p[1]
-# TODO
 
 
 def p_factor_minus(p):  # Term -
@@ -267,8 +301,13 @@ def p_unary_call(p):
 
 
 def p_call(p):  # call
-    '''Call : Primary Arguments '''
-    p[0] = CallArgsNode(p[1], p[2])
+    '''Call : Primary OPP Arguments CLP'''
+    p[0] = CallArgsNode(p[1], p[3])
+
+
+def p_call_(p):
+    '''Call : Primary'''
+    p[0] = p[1]
 
 
 def p_arguments_aster_eps(p):
@@ -316,12 +355,12 @@ def p_primary_nil(p):
 
 def p_primary_id(p):
     '''Primary : ID'''
-    p[0] = p[1]
+    p[0] = CallVar(p[1])
 
 
-def p_primary_expression(p):
-    '''Primary : OPP Expression CLP'''
-    p[0] = ExpressionNode(p[2])  # !duda
+# def p_primary_expression(p):
+#     '''Primary : OPP Arguments CLP'''
+#     p[0] = p[2]  # !duda
 
 
 def p_arguments(p):
@@ -331,7 +370,7 @@ def p_arguments(p):
 
 def p_expression_aster(p):
     '''Expression_aster : COMMA Expression Expression_aster'''
-    p[0] = p[2] + p[3]
+    p[0] = [p[2]] + p[3]
 
 
 def p_expression_aster_eps(p):
@@ -392,7 +431,11 @@ def p_empty(p):
 
 # TOKENS = my_lexe.tokenize_text(text)
 # lexer = lex.lex()
+file = open("dsl/test.txt")
+lines = file.read()
 parser = yacc.yacc()
-result = parser.parse(
-    " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army> int a = 5;</Sim>")
+result = parser.parse(lines)
+result.eval()
+# result = parser.parse(
+#     " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army> ;</Sim>")
 print(result)
