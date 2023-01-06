@@ -8,14 +8,14 @@ from characteristics_of_soldiers import all_characteristics, EnumAttribute
 from weather import stats as weather
 from armors import armors, dress_army, dress_army_variant_b, min_price
 import gen_algorithm as ga
-from colorama import Fore
 import pickle
 
 
 def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds, gen):
+    if (amount_army_a + amount_army_b) > (map_rows * map_cols) or amount_army_a > ((map_rows * map_cols) // 2) - 1 or amount_army_b > ((map_rows * map_cols) // 2) - 1:
+        raise Exception("Demasiados soldados para un mapa tan pequeño.")
     arms = armors
     start_price = ((amount_army_a + amount_army_b) // 3) * 30
-    # !revisar bien esto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     soldiers: List[Soldier] = []
     visits = amount_army_a // 3
     map = Map(map_rows, map_cols, visits)  # mapa de la simulacion
@@ -35,16 +35,16 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds, g
     # aqui estamos anhadiendo caracteristicas a los soldados, 3 por soldado
     __charact = gen[:3]
     add_charact_variat_b(army_a, __charact)
-    #add_soldiers_characteristics(army_a, 3)
+    # add_soldiers_characteristics(army_a, 3)
     add_soldiers_characteristics(army_b, 3)
 
     # a partir de la region seleccionada y la fecha => generar una v_a para las precipitaciones
     rain = weather.Rain()
     # para testear se elejira como pais espanha y mes julio
-    country = "spain"
-    month = "july"
-    # country = input("spain o argentina: ")
-    # month = input("print a month of the year: ")
+    # country = "spain"
+    # month = "july"
+    country = input("spain o argentina: ")
+    month = input("print a month of the year: ")
 
     mean, var = rain.calc_mean_var(country)
     iterations = [i for i in range(rounds)]
@@ -59,27 +59,21 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds, g
 
         soldiers_a, soldiers_b = Graph_simulation.count_soldiers_alive(
             soldiers_a, soldiers_b, map)
+
         for soldier in soldiers:
-            if soldier.weapon_life <= 0:
-                if soldier.camp.state == True:
-                    soldier.return_to_camp(map)
-                    continue
-            else:
-                attacked = soldier.attack_strategy_one(map)
-                if not attacked:
-                    next_pos = auxiliar.bfs(map.get_battlefield(), soldier)
-                    if next_pos != None:
-                        # !!!!! aqui voy a cambiar cosas pa q si tienen energia se muevan, sino de un pasito nama
-                        spend_energy = soldier.use_energy(next_pos)
-                        if soldier.get_energy() - spend_energy >= 0:
-                            soldier.move_soldier(
-                                next_pos[0], next_pos[1], map.get_battlefield())
+            soldier.check_enviroment(map)
+            actions = soldier.calculate()
+            for action in actions:
+                soldier.actionDict[action['name']](soldier, map)
+                if action['name'] == 'figth':
+                    # chequeo muertes por combate
+                    auxiliar.remove_soldier_form_list(soldiers, army_a, army_b)
         if rounds % 5 == 0:
             print_map(map)
         print('\n')
-        # if len(army_a) <= len(army_b)*0.3  or len(army_b) <= len(army_a)*0.3:   ## revisar esto bien
-        #     #print("No se acabo x las rondas de simulacion")
-        #     break
+
+        map.remove_fallen_soldiers()
+
         if len(army_a) == 0 or len(army_b) == 0:
             break
         soldier_energy(soldiers)
@@ -88,29 +82,17 @@ def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds, g
                 rain.remove_debuff(sol)
         for camp in map.camps:
             fix_weapons_and_restore_stats(camp, map)
-        remove_soldier_form_list(soldiers, army_a, army_b)
-        map.remove_fallen_soldiers()
         rounds -= 1
 
     auxiliar.fix_axes(iterations, soldiers_a, soldiers_b)
-    # Graph_simulation.plot_soldiers_alive("battle progression",iterations,soldiers_a,soldiers_b)
-    # (soldiers_a, soldiers_b, "Cantidad de soldados")
-    # pyplot.show()
     print(army_a, army_b, len(soldiers))
-    # print(map.battlefield)
-    # print(rounds)
     print_map(map)
+    # print(rounds)
+    Graph_simulation.plot_soldiers_alive(
+        "battle progression", iterations, soldiers_a, soldiers_b)
+    (soldiers_a, soldiers_b, "Cantidad de soldados")
+    pyplot.show()
     return soldiers
-
-
-def remove_soldier_form_list(soldiers, army_a, army_b):
-    for i, soldier in enumerate(soldiers):
-        if soldier.life_points <= 0:
-            temp = soldiers.pop(i)
-            if temp in army_a:
-                army_a.remove(temp)
-            else:
-                army_b.remove(temp)
 
 
 def add_soldiers_characteristics(list_soliders, max_charact):
@@ -134,8 +116,6 @@ def add_charact_variat_b(list_soldiers, charact_index: list[int]):
 
 def soldier_energy(soldiers):
     for soldier in soldiers:
-        if soldier.get_energy() > 300:
-            continue
         soldier.recover_enery()
 
 
@@ -179,12 +159,11 @@ def check_possition(soldiers, camps, map):
 
 
 # Para usar el algoritmo genético descomente las 3 siguientes lineas
-# y comente las lineas, 186-188
+# y comente las lineas 45,45,89 y descomente 42,43
 # ga_ = ga.GeneticALgorithm(
 #     characteristics_of_soldiers, armors, min_price, 1000, start_simulation)
 # gen = ga_.optimize()
 # gen = [3, 2, 1, (0, 4), (1, 5), (2, 4), (3, 6), (4, 2)]
-pickle_1 = open(
-    'C:/Users/acer/Downloads/Telegram Desktop/Simulacion/Proyecto simulacion/Battlefield/gen.txt', 'rb')
+pickle_1 = open('./gen.txt', 'rb')
 gen = pickle.load(pickle_1)
-soldiers_ = start_simulation(20, 20, 40, 40, 100, gen[0])
+soldiers_ = start_simulation(20, 20, 40, 40, 200, gen[0])

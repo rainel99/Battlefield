@@ -1,6 +1,5 @@
 import random as rd
 from matplotlib import pyplot, colors
-from pyparsing import restOfLine
 
 
 class Map():
@@ -56,14 +55,14 @@ class Map():
     def get_free_cell(self, army):
         free_cells = []
         if army == 'A':
-            for row in range(self.get_row()//2):  # range(0, self.rows//2)
-                for col in range(self.get_col()):  # range(self.get_col())
+            for row in range(self.get_row()//2):
+                for col in range(self.get_col()):
                     if self.is_free_cell(row, col):
                         free_cells.append((row, col))
         if army == 'B':
             # range(self.rows//2, self.rows)
             for row in range(self.get_row()//2, self.get_row()):
-                for col in range(self.get_col()):  # range(self.get_col())
+                for col in range(self.get_col()):
                     if self.is_free_cell(row, col):
                         free_cells.append((row, col))
         if len(free_cells) == 0:
@@ -111,7 +110,6 @@ class Map():
             self.battlefield[pos_x][pos_y] = Camp(army, pos_x, pos_y, visits)
             camp_amount -= 1
             self.camps.append(self.battlefield[pos_x][pos_y])
-            print(f"campamento creado en {pos_x, pos_y}")
 
 
 class Camp(object):
@@ -128,7 +126,6 @@ class Camp(object):
         self.visits -= 1
         if self.visits == 0:
             self.state = False
-            print("CAMPAMENTO AGOTADO")
 
     def __repr__(self) -> str:
         return "C"

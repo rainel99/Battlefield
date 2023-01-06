@@ -44,6 +44,8 @@ class Rain:
         return my_mean, my_var
 
     def get_rain_prob(self, mean, var, month):
+        if month not in self.dic_month_num.keys():
+            month = 'july'
         if type(mean) is list:
             v_a = stat.NormalDist(
                 mean[self.dic_month_num[month]], var[self.dic_month_num[month]]**(1/2))

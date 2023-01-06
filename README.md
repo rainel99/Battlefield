@@ -15,7 +15,7 @@ Cada una de estas estadísticas se definen al inicio de la simulación cuando es
 Además los soldados podrán vestir algunos tipos de armaduras que potenciarán sus estadisticas.
 Estos soldados "pelearán" en un campo de batalla que estará representado por una matriz bidimensional. Los soldados en el momento que se crean se ubican en una posición válida de la matriz.
 
-En dicho campo de batalla habrá "campamentos" donde los soldados podrán ir a alimentarse o reparar sus armaduras. Cada campamentos se creará en lugares arbitrarios al inico de la batalla.
+En dicho campo de batalla habrá "campamentos" donde los soldados podrán ir a alimentarse o reparar sus armaduras. Cada campamentos se creará en lugares arbitrarios al inico de la batalla. En las batallas pueden ocurrir eventos relacionados con el tiempo, que se pretenden simular de manera aleatoria que pueden afectar a los ejércitos en cuestión.
 
 ### Reglas de la simulación
 
@@ -26,4 +26,9 @@ En dicho campo de batalla habrá "campamentos" donde los soldados podrán ir a a
   - Un ejército perdió a todas sus tropas.
   - Luego de un número N de iteraciones algún ejército es el 20% del otro.
   - Luego de un número N de iteracines se detiene la simulación y el ejército ganador será el que tenga mayor cantidad de vida total, se define como vida total a la suma de los puntos de vidas de los soldados vivos en el momento que se detuvo la simulación.
+
+### IA
+
+Se quiere que cada uno de los ejércitos, sea controlado por una inteligencia artificial que se encargará de tomar las decisiones que más beneficien al a su ejército en cada momento. Se definirán estados para lograr hacer búsqueda entre los posibles estados y obtener los mejores resultados posibles. La IA queremos se encargeue de mover a los soldados para busquen a los oponentes de una forma que minimicen el daño recibido y puedan causar mas bajas en el enemigos.
+Se quiere además que la ubicación de los ejércitos asi como el balance de las estadísticas sea una tarea que la IA pueda resolver para mejorar el resultado de la batalla. 
  

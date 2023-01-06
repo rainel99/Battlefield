@@ -1,4 +1,3 @@
-# direct_array:   N,S,E,W,NW,NE,SW,SE
 
 directions_row = [-1, 1, 0, 0]
 directions_col = [0, 0, 1, -1]
@@ -14,6 +13,7 @@ def fix_axes(iterations, soldiers_A, soldiers_B):
 
 
 def bfs(map, soldier):
+    map = map.get_battlefield()
     visit_complete = []
     my_queue = []
     current_node = (soldier.get_pos_x(), soldier.get_pos_y())
@@ -26,7 +26,7 @@ def bfs(map, soldier):
             new_row = current_node[0] + directions_row[i]
             new_col = current_node[1] + directions_col[i]
             if in_range(new_row, new_col, len(map), len(map[0])) and (new_row, new_col) not in visit_complete and (new_row, new_col) not in my_queue:
-                if map[new_row][new_col] != None and map[new_row][new_col].army != soldier.army and current_node != initial_pos:
+                if map[new_row][new_col] != None and map[new_row][new_col].army != soldier.army and current_node != initial_pos and map[new_row][new_col].__str__() != "C":
                     return current_node
                 if map[new_row][new_col] == None:
                     my_queue.append((new_row, new_col))
@@ -44,13 +44,12 @@ def marge_armys(army_a, army_b, soldiers):
     for soldier in army_b:
         soldiers.append(soldier)
 
-# a = Soldier(0,0,'A')
-# b = Soldier(4,3,'B')
-# graph = [[None]*5 for _ in range(5)]
-# graph[0][0] = a
-# graph[4][3] = b
-# output = bfs(graph,a)
-# print(output)
 
-
-# print(abs(a.get_pos_x() - output[0]) + abs(a.get_pos_y() - output[1]))
+def remove_soldier_form_list(soldiers, army_a, army_b):
+    for i, soldier in enumerate(soldiers):
+        if soldier.life_points <= 0:
+            temp = soldiers.pop(i)
+            if temp in army_a:
+                army_a.remove(temp)
+            else:
+                army_b.remove(temp)

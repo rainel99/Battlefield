@@ -109,19 +109,3 @@ class GeneticALgorithm:
             pickle.dump(children[0], fh)
             fh.close()
         return children[0]
-
-
-# ga = GeneticALgorithm(charact_soldiers, _armors, min_price,
-#                       1000, sim.start_simulation)
-# population = ga.population()
-# # scores = ga.get_fitness_scores(population)
-# # sc = scores
-# # with open('dic_indx_tfidf.txt', 'wb') as fh:
-# #     pickle.dump(sc, fh)
-# #     fh.close()
-
-# pickle_1 = open(
-#     'C:/Users/acer/Downloads/Telegram Desktop/Simulacion/Proyecto simulacion/Battlefield/dic_indx_tfidf.txt', 'rb')
-# po = pickle.load(pickle_1)
-# # print(po)
-# ga.optimize(po, population)
