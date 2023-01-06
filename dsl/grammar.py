@@ -3,6 +3,8 @@ from dsl.nodes_ast import ArmyNode, MapNode, SimulationNode
 from lexer import *
 
 
+
+
 def p_simulation(p):  # S -> <Simulation> MAA </Simulation>
     '''Simualation : CmpOp.Lt Simulation CmpOp.Gt MapDetail Army Army CmpOp.Lt AlgebraicOperators.Div Simulation  CmpOp.Gt'''
     p[0] = SimulationNode(p[4], p[5], p[6])
