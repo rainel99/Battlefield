@@ -1,4 +1,8 @@
+<< << << < HEAD
 # direct_array:   N,S,E,W
+== == == =
+# direct_array:   N,S,E,W,NW,NE,SW,SE
+>>>>>> > comp
 
 directions_row = [-1, 1, 0, 0]
 directions_col = [0, 0, 1, -1]

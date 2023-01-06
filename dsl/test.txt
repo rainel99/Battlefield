@@ -1,21 +1,40 @@
-rainel = 1;
-    <Simulacion> 
-        body;
-    <Simulacion/>
-
-<while> true
-    body;
-<while/>
-my_var = 1;
-if my_var == 1{
-    return 0;
-}
-
-
-
-
-
-poner q coda golpe se melle el arma, q esto se acmule
-hay q testear q para mapas mas grandes si creen mas campamentos y que la asignacion de los soldados a los camps funcione
-
-
+<Sim> 
+    <Map>
+        row = 5;
+        col = 5;
+    </Map>
+    <Army>
+        army_name = 1;
+        amount = 5;
+    </Army>
+    <Army>
+        army_name = 2;
+        amount = 5;
+    </Army>
+    func my_func(int x, int y){
+        int a = 5;
+        int b = 7;
+        if (a == b){
+            print a;
+        }
+        else{
+            print b + a;
+        }
+        print 5 == 5;
+    }
+    #func rainel(int x){
+    #    while (x > 0){
+    #       print x*x;
+    #       x = x - 1;
+    #    }
+    #}
+    func rainel(int x){
+        if (x == 0){
+            return nil ;
+        }
+        print x*x;
+        rainel(x - 1);
+    }
+    my_func(5,6);
+    rainel(5);
+</Sim>

@@ -86,7 +86,7 @@ class Soldier(Agent):
     def check_enviroment(self, map):
         """
         Este metodo recibe el mapa del terreno y busca si en el rango de ataque de este soldado hay
-        un enemigo para atacarlo. Cuando encuentra al primer oponente se detiene la busqueda y 
+        un enemigo para atacarlo. Cuando encuentra al primer oponente se detiene la busqueda y
         se decide atacar dicho soldado.
 
         Args:
