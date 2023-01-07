@@ -16,7 +16,7 @@ Propuesta para Proyecto de simulacion, asignatura del 3er año de la carrera Cie
 Nuestro proyecto tiene como objetivo simular una batalla entre dos ejércitos. Dichos ejércitos estarán conformados por soldados, que tendrán algunas estadísticas que serán decisivas en el resultado de la batalla.
 
 Cada una de estas estadísticas se definen al inicio de la simulación cuando es creado cada soldado y tienen valores predeterminados.
-Además los soldados podrán vestir algunos tipos de armaduras que potenciarán sus estadisticas.
+Además los soldados podrán vestir algunos tipos de armaduras que potenciarán sus estadísticas.
 Estos soldados "pelearán" en un campo de batalla que estará representado por una matriz bidimensional. Los soldados en el momento que se crean se ubican en una posición válida de la matriz.
 
 En dicho campo de batalla habrá "campamentos" donde los soldados podrán ir a alimentarse o reparar sus armaduras y armas. Cada campamentos se creará en lugares arbitrarios al inico de la batalla. En las batallas pueden ocurrir eventos relacionados con el tiempo, el cual se modeló haciendo
@@ -25,7 +25,7 @@ uso de una variable aleatoria con distribución normal apoyados en data-sets rea
 ### Reglas de la simulación
 
 - La simulación se llevará a cabo por rondas. Donde cada ronda será una iteración de la simulación.
-- En cada ronda, los soldados, en dependencia de su entorno, marcan un objetivo y ejecutarán las aciones necesarias para lograrlo. 
+- En cada ronda, los soldados, en dependencia de su entorno, marcan un objetivo y ejecutarán las acciones necesarias para lograrlo. 
 - Cada vez que los puntos de vida de algún soldado llegue a 0, muere, este deja de existir en el campo de batalla.
 - Para finalizar la simualción se puede elegir entre alguno de estos criterios:
   - Un ejército perdió a todas sus tropas.
@@ -33,13 +33,13 @@ uso de una variable aleatoria con distribución normal apoyados en data-sets rea
 
 ### IA
 
-GOAP o Goal Oriented Action Planning es una poderosa arquitectura de planificación diseñada para el control en tiempo real del comportamiento autónomo de los personajes en los juegos. Permite planificar dinámicamente una secuencia de acciones para satifacer un objetivo establecido. La secuencia de acciones seleccionadas por el agente depende tanto del estado actual del agente como del estado actual del mundo, por lo tanto, a pesar de que a dos agentes se les asigne el mismo objetivo, ambos agentes podían seleccionar una secuencia de acciones completamente diferente.
+GOAP o Goal Oriented Action Planning es una poderosa arquitectura de planificación diseñada para el control en tiempo real del comportamiento autónomo de los personajes en los juegos. Permite planificar dinámicamente una secuencia de acciones para satisfacer un objetivo establecido. La secuencia de acciones seleccionadas por el agente depende tanto del estado actual del agente como del estado actual del mundo, por lo tanto, a pesar de que a dos agentes se les asigne el mismo objetivo, ambos agentes podían seleccionar una secuencia de acciones completamente diferente.
 
 El agente elabora un plan a partir de las condiciones iniciales y un objetivo. Los objetivos simplemente definen que condiciones deben cumplirse para satifacerlo. Un plan esta compuesto de acciones, que son solo un paso atómico dentro de un plan que hace que el agente haga algo. Cada acción definida es consciente de cuándo es válido ejecutarla, cuáles serán sus efectos en el mundo del juego y cuan costosa es.
 
 El planificador es un pieza fundamental el GOAP, analiza las condiciones previas y efectos de cada acción para determinar una cola de acciones para satisfacer el objetivo. El planificador encuentra la solución construyendo un "árbol" y utilizando A*.
 
-Otros contenidos de IA usados fueron BFS y un algoritmo génetico como alternativa a la asignacion de estadísticas y almaduras a los soldados. Este algoritmo crea en un principio una población y usa como función de fitnnes la propia simulación, elige los genes de la próxima generación mediante un ranking y se utiliza el cruce "one_point" para crear los nuevos indiviuos. Las poblaciones creadas a partir de este algoritmo génetico han tenido mucho más 'éxito en la simulación.
+Otros contenidos de IA usados fueron BFS y un algoritmo génetico como alternativa a la asignacion de estadísticas y armaduras a los soldados. Este algoritmo crea en un principio una población y usa como función de fitnnes la propia simulación, elige los genes de la próxima generación mediante un ranking y se utiliza el cruce "one_point" para crear los nuevos indiviuos. Las poblaciones creadas a partir de este algoritmo génetico han tenido mucho más 'éxito en la simulación.
 
 
 
