@@ -3,6 +3,8 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 Unused terminals:
 
     DOT
+    STR
+    STRING
 
 Grammar
 
@@ -122,6 +124,8 @@ ROW                  : 3
 SEMICOLOM            : 3 4 7 8 14 24 28 29
 SIMULATION           : 1 1
 STAR                 : 50
+STR                  : 
+STRING               : 
 TRUE                 : 59
 WHILE                : 30
 error                : 

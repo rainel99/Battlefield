@@ -1,7 +1,6 @@
 from ply.yacc import yacc
-from nodes_ast import *
-from nodes_ast import ArmyNode, MapNode, SimulationNode
-from lexer import *
+from dsl.lexer import *
+from dsl.nodes_ast import *
 
 
 def p_simulation(p):  # S -> <Simulation> MAA </Simulation>
@@ -48,16 +47,6 @@ def p_army_detail_eps(p):
     '''ArmyDetail : empty'''
     p[0] = []
 #!a partir de aqui es new
-
-
-# def p_program_aster(p):
-#     '''Program_aster : Program Program_aster'''
-#     p[0] = [p[1]] + p[2]
-
-
-# def p_program_eps(p):
-#     '''Program_aster : empty'''
-#     p[0] = []
 
 
 def p_program(p):
@@ -431,11 +420,11 @@ def p_empty(p):
 
 # TOKENS = my_lexe.tokenize_text(text)
 # lexer = lex.lex()
-file = open("dsl/test.txt")
-lines = file.read()
-parser = yacc.yacc()
-result = parser.parse(lines)
-result.eval()
-# result = parser.parse(
-#     " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army> ;</Sim>")
-print(result)
+def run():
+    file = open("dsl/test.txt")
+    lines = file.read()
+    parser = yacc.yacc()
+    result = parser.parse(lines)
+    result.eval()
+    # result = parser.parse(
+    #     " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army> ;</Sim>")
