@@ -214,6 +214,10 @@ def create_soldier(amount_of_soldier, army, map):
         List[Soldier]: Devuelve una lista con los soldados creadoss
     """
     soldiers = []
+    if army == 1:
+        army = 'A'
+    if army == 2:
+        army = 'B'
     for _ in range(amount_of_soldier):
         pos_x, pos_y = map.get_free_cell(army)
         if pos_x == None or pos_y == None:

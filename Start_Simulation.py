@@ -1,4 +1,3 @@
-from math import inf
 from Soldier import *
 from Battlefield import *
 import Graph_simulation
@@ -11,19 +10,19 @@ import gen_algorithm as ga
 import pickle
 
 
-def start_simulation(map_rows, map_cols, amount_army_a, amount_army_b, rounds, gen):
-    if (amount_army_a + amount_army_b) > (map_rows * map_cols) or amount_army_a > ((map_rows * map_cols) // 2) - 1 or amount_army_b > ((map_rows * map_cols) // 2) - 1:
-        raise Exception("Demasiados soldados para un mapa tan pequeño.")
+def start_simulation(map, army_a, army_b, rounds, gen):
+    # if (amount_army_a + amount_army_b) > (map_rows * map_cols) or amount_army_a > ((map_rows * map_cols) // 2) - 1 or amount_army_b > ((map_rows * map_cols) // 2) - 1:
+    #     raise Exception("Demasiados soldados para un mapa tan pequeño.")
     arms = armors
-    start_price = ((amount_army_a + amount_army_b) // 3) * 30
+    start_price = ((len(army_a) + len(army_b)) // 3) * 30
     soldiers: List[Soldier] = []
-    visits = amount_army_a // 3
-    map = Map(map_rows, map_cols, visits)  # mapa de la simulacion
-    army_a = create_soldier(amount_army_a, 'A', map)
+    # visits = amount_army_a // 3
+    # map = Map(map_rows, map_cols, visits)  # mapa de la simulacion
+    # army_a = create_soldier(amount_army_a, 'A', map)
     __arms = gen[3:]
     dress_army_variant_b(army_a, __arms, arms)
     # dress_army(army_a, start_price, min_price.price)
-    army_b = create_soldier(amount_army_b, 'B', map)
+    # army_b = create_soldier(amount_army_b, 'B', map)
     dress_army(army_b, start_price, min_price.price)
     auxiliar.marge_armys(army_a, army_b, soldiers)
     asign_camps_to_soldiers(soldiers, map.get_camps())
@@ -164,6 +163,8 @@ def check_possition(soldiers, camps, map):
 #     characteristics_of_soldiers, armors, min_price, 1000, start_simulation)
 # gen = ga_.optimize()
 # gen = [3, 2, 1, (0, 4), (1, 5), (2, 4), (3, 6), (4, 2)]
-pickle_1 = open('./gen.txt', 'rb')
-gen = pickle.load(pickle_1)
-soldiers_ = start_simulation(20, 20, 40, 40, 200, gen[0])
+
+
+# pickle_1 = open('./gen.txt', 'rb')
+# gen = pickle.load(pickle_1)
+# soldiers_ = start_simulation(20, 20, 40, 40, 200, gen[0])

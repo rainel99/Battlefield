@@ -1,13 +1,9 @@
 from abc import abstractmethod
-from contextlib import ContextDecorator
-from logging import exception
-from sre_constants import ASSERT_NOT
-from symbol import expr
-from matplotlib.style import context
-import ply.yacc as yacc
-from psycopg2 import paramstyle
-from pyparsing import condition_as_parse_action
-from zmq import ContextTerminated
+from ply import yacc
+import pickle
+from Soldier import create_soldier
+from Start_Simulation import start_simulation
+from Battlefield import Map
 
 
 def create_context_child(context):
@@ -27,7 +23,7 @@ class AstNode(object):
 
 class AstNodeChildren(AstNode):
     def __init__(self, *args) -> None:
-        self.children = [args]
+        self.children = args
 
 
 class SimulationNode(AstNode):
@@ -40,18 +36,47 @@ class SimulationNode(AstNode):
     def eval(self):
         new_context = {}
         self.program.eval(new_context)
+        row, col = self.M.eval(new_context)
+        amount, army_name = self.A1.eval(new_context)
+        amount_, army_name_ = self.A2.eval(new_context)
+        my_map = Map(row, col, amount//3)
+        army_1 = create_soldier(amount, army_name, my_map)
+        army_2 = create_soldier(amount_, army_name_, my_map)
+        pickle_1 = open('./gen.txt', 'rb')
+        gen = pickle.load(pickle_1)
+        start_simulation(my_map, army_1, army_2, 200, gen[0])
 
 
 class MapNode(AstNodeChildren):
     def __init__(self, *args) -> None:
-        super().__init__(*args)
+        self.children = args
+
+    def eval(self, context):
+        if len(self.children) > 2:
+            raise Exception("----")
+        else:
+            if self.children[0][0][0] != 'ROW' and self.children[0][1][0] != 'COL':
+                raise Exception("----")
+            if self.children[0][0][0] == 'ROW':
+                return self.children[0][0][1], self.children[0][1][1]
+            else:
+                return self.children[0][1][1], self.children[0][0][1]
 
 
 class ArmyNode(AstNodeChildren):
     def __init__(self, *args) -> None:
         super().__init__(*args)
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    def eval(self, context):
+        if len(self.children) > 2:
+            raise Exception("-----")
+        else:
+            if self.children[0][0][0] != 'AMOUNT' and self.children[0][0][0] != 'ARMY_name':
+                raise Exception("----")
+            if self.children[0][0] == 'ARMY_name':
+                return self.children[0][0][1], self.children[0][1][1]
+            else:
+                return self.children[0][1][1], self.children[0][0][1]
 
 
 class ProgramNode(AstNode):
@@ -457,6 +482,14 @@ class PrimaryNumberNode(PrimaryNode):
         return self.token
 
 
+class PrimaryStringNode(PrimaryNode):
+    def __init__(self, token) -> None:
+        super().__init__(token)
+
+    def eval(self, context):
+        return self.token
+
+
 class PrimaryIdNode(PrimaryNode):
     def __init__(self, token) -> None:
         super().__init__(token)
@@ -481,7 +514,7 @@ class ArgumentsNode(AstNode):
         self.expr = expr
 
     def eval(self, context):
-        for ex in expr:
+        for ex in self.expr:
             ex.eval(context)
 
 
