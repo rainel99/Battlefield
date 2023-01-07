@@ -3,6 +3,8 @@ from dsl.lexer import *
 from dsl.nodes_ast import *
 
 
+
+
 def p_simulation(p):  # S -> <Simulation> MAA </Simulation>
     '''Simulation : LT SIMULATION GT M A A Program LT DIV SIMULATION GT'''
     p[0] = SimulationNode(p[4], p[5], p[6], p[7])

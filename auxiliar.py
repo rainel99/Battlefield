@@ -1,6 +1,6 @@
 
-directions_row = [-1, 1, 0, 0]
-directions_col = [0, 0, 1, -1]
+directions_row = [-1, 1, 0, 0, -1, -1, 1, 1]
+directions_col = [0, 0, 1, -1, -1, 1, 1, -1]
 
 
 def fix_axes(iterations, soldiers_A, soldiers_B):
