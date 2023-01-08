@@ -33,10 +33,11 @@ class AstNodeChildren(AstNode):
 
 
 class SimulationNode(AstNode):
-    def __init__(self, Map, Army_1, Army_2, program) -> None:
+    def __init__(self, Map, Army_1, Army_2, round, program) -> None:
         self.M = Map
         self.A1 = Army_1
         self.A2 = Army_2
+        self.rounds = int(round)
         self.program = program
         self.context = {}
 
@@ -50,7 +51,7 @@ class SimulationNode(AstNode):
         army_2 = create_soldier(amount_, army_name_, my_map)
         pickle_1 = open('./gen.txt', 'rb')
         gen = pickle.load(pickle_1)
-        start_simulation(my_map, army_1, army_2, 200, gen[0])
+        start_simulation(my_map, army_1, army_2, self.rounds, gen[0])
 
     def checktype_(self):
         if not self.M.checktype(self.context) or not self.A1.checktype(self.context) or not self.A2.checktype(self.context) or not self.program.checktype(self.context):
@@ -402,7 +403,11 @@ class AssignNode(ExpressionNode):
             return False
         else:
             self.type_.checktype(context)
-            context[self.id] = (self.type_.type, self.value.token)
+            if not self.value.checktype(context):
+                return False
+            # if self.type_.type != self.value.type:
+            #     return False
+            context[self.id] = (self.type_.type, self.value)
         if self.type_.type != self.value.type:
             return False
         self.type = self.type_.type
@@ -743,6 +748,7 @@ class CallArgsNode(CallNode):
         self.args = args
 
     def eval(self, context):
+        temp = None
         new_context = create_context_child(context)
         if self.primary.id in new_context.keys():
             if len(self.args) != len(new_context[self.primary.id][0]):
@@ -870,7 +876,10 @@ class CallVar(AstNode):
 
     def eval(self, context):
         if self.id in context:
-            return context[self.id]
+            if type(context[self.id]) is tuple:
+                return context[self.id][1].eval(context)
+            else:
+                return context[self.id]
         else:
             assert Exception("----")
 
@@ -896,18 +905,6 @@ class TypeIntNode(AstNode):
 
     def checktype(self, context):
         self.type = 'int'
-        return True
-
-    def eval(self, context):
-        pass
-
-
-class TypeSTrNode(AstNode):
-    def __init__(self, type=None) -> None:
-        self.type = type
-
-    def checktype(self, context):
-        self.type = 'str'
         return True
 
     def eval(self, context):

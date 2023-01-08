@@ -22,7 +22,6 @@ tokens = (
     'SEMICOLOM',
     'ID',
     'NOT',
-    'STRING',
 )
 
 t_NOT = r'\!'
@@ -45,7 +44,6 @@ t_DOT = r'\.'
 t_COMMA = r'\,'
 t_SEMICOLOM = r';'
 t_NIL = r'NIL'
-t_STRING = r'\"([a-zA-z])+\"'
 ID = r'([a-zA-z])+'
 
 
@@ -69,9 +67,9 @@ reserved = {
     "false": "FALSE",
     "nil": "NIL",
     "int": "INT",
-    "str": "STR",
     "void": "VOID",
-    "bool": "BOOL"
+    "bool": "BOOL",
+    "rounds": "ROUNDS",
 }
 
 

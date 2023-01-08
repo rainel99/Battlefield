@@ -4,8 +4,13 @@ from dsl.nodes_ast import *
 
 
 def p_simulation(p):  # S -> <Simulation> MAA </Simulation>
-    '''Simulation : LT SIMULATION GT M A A Program LT DIV SIMULATION GT'''
-    p[0] = SimulationNode(p[4], p[5], p[6], p[7])
+    '''Simulation : LT SIMULATION GT M A A R Program LT DIV SIMULATION GT'''
+    p[0] = SimulationNode(p[4], p[5], p[6], p[7], p[8])
+
+
+def p_round(p):
+    '''R : ROUNDS EQ NUMERIC SEMICOLOM'''
+    p[0] = p[3]
 
 
 def p_map(p):  # M -> <Map> MapDetail <Map/>
@@ -393,11 +398,6 @@ def p_params_aster_eps(p):
 def p_type_int(p):
     '''Type_ : INT'''
     p[0] = TypeIntNode(p[1])
-
-
-def p_type_str(p):
-    '''Type_ : STR'''
-    p[0] = TypeSTrNode(p[1])
 
 
 def p_type_bool(p):
