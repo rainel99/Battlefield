@@ -3,8 +3,6 @@ from dsl.lexer import *
 from dsl.nodes_ast import *
 
 
-
-
 def p_simulation(p):  # S -> <Simulation> MAA </Simulation>
     '''Simulation : LT SIMULATION GT M A A Program LT DIV SIMULATION GT'''
     p[0] = SimulationNode(p[4], p[5], p[6], p[7])
@@ -70,11 +68,6 @@ def p_declaration_var(p):  # Declaracion de variable
 def p_declaration_statement(p):
     '''Declaration : Statement'''
     p[0] = [p[1]]
-
-
-# def p_declaration_empty(p):
-#     '''Declaration : empty'''
-#     p[0] = []
 
 
 def p_var_decl(p):
@@ -176,7 +169,7 @@ def p_assignment_(p):
     p[0] = AssignNode_(p[1], p[3])
 
 
-def p_assignment(p):
+def p_assignment(p):  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     '''Assignment : Type_ ID EQ Logic_or'''
     p[0] = AssignNode(p[1], p[2], p[4])
 
@@ -349,11 +342,6 @@ def p_primary_id(p):
     p[0] = CallVar(p[1])
 
 
-# def p_primary_expression(p):
-#     '''Primary : OPP Arguments CLP'''
-#     p[0] = p[2]  # !duda
-
-
 def p_arguments(p):
     '''Arguments : Expression Expression_aster'''
     p[0] = [p[1]] + p[2]
@@ -376,8 +364,8 @@ def p_fun_decl(p):
 
 
 def p_function(p):
-    '''Function : ID OPP Params CLP Block '''
-    p[0] = FuncNode(p[1], p[3], p[5])
+    '''Function : Type_ ID OPP Params CLP Block '''
+    p[0] = FuncNode(p[2], p[4], p[6], p[1])
 
 
 def p_params(p):
@@ -402,8 +390,23 @@ def p_params_aster_eps(p):
 
 #!EndFunction
 
-def p_type_(p):
+def p_type_int(p):
     '''Type_ : INT'''
+    p[0] = TypeIntNode(p[1])
+
+
+def p_type_str(p):
+    '''Type_ : STR'''
+    p[0] = TypeSTrNode(p[1])
+
+
+def p_type_bool(p):
+    '''Type_ : BOOL'''
+    p[0] = TypeBoolNode(p[1])
+
+
+def p_type_void(p):
+    '''Type_ : VOID'''
     p[0] = p[1]
 
 
@@ -427,6 +430,10 @@ def run():
     lines = file.read()
     parser = yacc.yacc()
     result = parser.parse(lines)
-    result.eval()
+    if result.checktype_():
+        result.eval()
+    else:
+        print("Error!")  # !!!!!
+
     # result = parser.parse(
     #     " <Sim><Map>row = 5;col = 5;</Map><Army>army_name = 1;amount = 5;</Army><Army>army_name = 2;amount = 5;</Army> ;</Sim>")

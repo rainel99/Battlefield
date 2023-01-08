@@ -62,7 +62,6 @@ reserved = {
     "Sim": "SIMULATION",
     "Army": "ARMY",
     "Map": "MAP",
-    "return": "RETURN",
     "func": "FUNC",
     "return": "RETURN",
     "print": "PRINT",
@@ -70,7 +69,9 @@ reserved = {
     "false": "FALSE",
     "nil": "NIL",
     "int": "INT",
-    "str": "STR"
+    "str": "STR",
+    "void": "VOID",
+    "bool": "BOOL"
 }
 
 
