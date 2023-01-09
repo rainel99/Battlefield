@@ -56,7 +56,7 @@ dos ejércitos lleva su etiqueta. Es posible definir funciones en el lenguaje qu
 **Sintaxis:**
 **Palabras claves**:
 *simulation* ,*army*, *map*, *row*, *col*, *army_name*, *amount*, *if*,
-*else*, *while*, *print*, *return*,*func*, *int*, *string*, *true*, *false*.
+*else*, *while*, *print*, *return*,*func*, *int*, *true*, *false*.
 
 **Arquitectura:**
 El compilador se puede divir en marcos:
