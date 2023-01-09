@@ -1,17 +1,17 @@
 from abc import abstractmethod
 from ply import yacc
 import pickle
-
+from context import Context
 from Soldier import create_soldier
 from Start_Simulation import start_simulation
 from Battlefield import Map
 
 
-def create_context_child(context):
-    my_context = {}
-    for key in context:
-        my_context[key] = context[key]
-    return my_context
+# def create_context_child(context):
+#     my_context = {}
+#     for key in context:
+#         my_context[key] = context[key]
+#     return my_context
 
 
 class AstNode(object):
@@ -39,7 +39,7 @@ class SimulationNode(AstNode):
         self.A2 = Army_2
         self.rounds = int(round)
         self.program = program
-        self.context = {}
+        self.context = Context()
 
     def eval(self):
         self.program.eval(self.context)
@@ -752,8 +752,8 @@ class CallArgsNode(CallNode):
         new_context = create_context_child(context)
         if self.primary.id in new_context.keys():
             if len(self.args) != len(new_context[self.primary.id][0]):
-                raise Exception(
-                    "Error! : Llamada a funcion con mas parametros de los que recibe")
+
+                print("Error! : Llamada a funcion con mas parametros de los que recibe")
             for i, name_var in enumerate(new_context[self.primary.id][0]):
                 new_context[name_var] = self.args[i].eval(context)
             try:
