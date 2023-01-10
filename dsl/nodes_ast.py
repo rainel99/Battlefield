@@ -796,10 +796,10 @@ class CallArgsNode(CallNode):
                 print("Error! : Llamada a funcion con mas parametros de los que recibe")
             for i, name_var in enumerate(new_context.find_value(self.primary.id)[0]):
                 new_context.asing_value(name_var, self.args[i].eval(context))
-            #try:
-            new_context.find_value(self.primary.id)[1].eval(new_context)
-            #except:
-            #    return
+            try:
+                new_context.find_value(self.primary.id)[1].eval(new_context)
+            except:
+                return
         else:
             assert Exception("----")
 
