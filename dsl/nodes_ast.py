@@ -170,7 +170,7 @@ class VarNode(AstNode):
         self.expr = expr
 
     def eval(self, context):
-        context.define(self.id,self.expr.eval(context))
+        context.asing_value(self.id,self.expr.eval(context))
 
     def checktype(self, context):
         if self.id in context:
@@ -181,7 +181,7 @@ class VarNode(AstNode):
             if self.type_.type == -1:
                 print("Error! : Variable inicializada como void")
                 return False
-            context.define(self.id,(self.type_.type, self.expr.type))
+            context.asing_value(self.id,(self.type_.type, self.expr.type))
         self.type = self.type_.type
         return True
 
@@ -394,10 +394,10 @@ class AssignNode(ExpressionNode):
         self.value = value
 
     def eval(self, context):  # ! revisar
-       # var = context.resolve(self.id)  
+       # var = context.find_value(self.id)  
         new_v = self.value.eval(context)
         #var = (self.type_, new_v)
-        context.define(self.id,new_v)
+        context.asing_value(self.id,new_v)
 
     def checktype(self, context):
         if not self.value.checktype(context) or not self.type_.checktype(context):
@@ -410,7 +410,7 @@ class AssignNode(ExpressionNode):
                 return False
             # if self.type_.type != self.value.type:
             #     return False
-            context.define(self.id,(self.type_.type, self.value))
+            context.asing_value(self.id,(self.type_.type, self.value))
         if self.type_.type != self.value.type:
             return False
         self.type = self.type_.type
@@ -423,12 +423,12 @@ class AssignNode_(ExpressionNode):
         self.value = value
 
     def eval(self, context):
-        if context.resolve(self.id):
-            var = context.resolve(self.id)  
+        if context.find_value(self.id):
+            var = context.find_value(self.id)  
             new_v = self.value.eval(context)
             var.token = new_v.token
         else:
-            context.define(self.id,new_v)
+            context.asing_value(self.id,new_v)
 
     def checktype(self, context):
         if self.id not in context.symbols.keys():
@@ -642,13 +642,13 @@ class FuncNode(AstNodeChildren):
         params_name = []
         for tup in self.params:
             params_name.append(tup[1])
-        context.define(self.id, (params_name, self.block))
+        context.asing_value(self.id, (params_name, self.block))
 
     def checktype(self, context):
         if self.id in context.symbols.keys():
             print("Error! : Funcion id existente.")
             return False
-        context.define(self.id, (self.return_type.type, self.params))
+        context.asing_value(self.id, (self.return_type.type, self.params))
         new_context = Context(context)
         for param in self.params:
             new_context.symbols[param[1]] = param[0].type
@@ -790,26 +790,26 @@ class CallArgsNode(CallNode):
     def eval(self, context):
         temp = None
         new_context = Context(context)
-        if new_context.resolve(self.primary.id) != None:
-            if len(self.args) != len(new_context.resolve(self.primary.id)[0]):
+        if new_context.find_value(self.primary.id) != None:
+            if len(self.args) != len(new_context.find_value(self.primary.id)[0]):
 
                 print("Error! : Llamada a funcion con mas parametros de los que recibe")
-            for i, name_var in enumerate(new_context.resolve(self.primary.id)[0]):
-                new_context.define(name_var, self.args[i].eval(context))
+            for i, name_var in enumerate(new_context.find_value(self.primary.id)[0]):
+                new_context.asing_value(name_var, self.args[i].eval(context))
             #try:
-            new_context.resolve(self.primary.id)[1].eval(new_context)
+            new_context.find_value(self.primary.id)[1].eval(new_context)
             #except:
             #    return
         else:
             assert Exception("----")
 
     def checktype(self, context):
-        if context.resolve(self.primary.id) == None:
+        if context.find_value(self.primary.id) == None:
             print("Error! : Llamado a funcion fuera de contexto")
             return False
         if not self.primary.checktype(context):
             return False
-        self.type = context.resolve(self.primary.id)[0]
+        self.type = context.find_value(self.primary.id)[0]
         return True
 
 
@@ -915,11 +915,11 @@ class CallVar(AstNode):
         self.id = id
 
     def eval(self, context):
-        if context.resolve(self.id) != None:
-            if type(context.resolve(self.id)) is tuple:
-                return context.resolve(self.id)[1].eval(context)
+        if context.find_value(self.id) != None:
+            if type(context.find_value(self.id)) is tuple:
+                return context.find_value(self.id)[1].eval(context)
             else:
-                return context.resolve(self.id)
+                return context.find_value(self.id)
         else:
              assert Exception("----")
 
@@ -939,10 +939,10 @@ class CallVar(AstNode):
 
         # if not self.id in context.keys(): #Antiguo
         #     return False
-        if context.resolve(self.id) == None:
+        if context.find_value(self.id) == None:
             return  False
-        if type(context.resolve(self.id)) == tuple:
-            self.type = context.resolve(self.id)[0]
+        if type(context.find_value(self.id)) == tuple:
+            self.type = context.find_value(self.id)[0]
         # if type(context[self.id]) == list:
 
         else:
