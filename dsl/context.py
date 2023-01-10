@@ -2,20 +2,17 @@ from typing import Any, Dict, Optional
 
 
 class Context:
-    def __init__(self, parent: Context = None):
+    def __init__(self, parent: Optional['Context'] = None):
         self.parent: Context = parent
         self.symbols: Dict[str, Any] = {}
         self.var_count: int = 0
 
-    def make_child(self) -> Context:
-        return Context(self)
-
-    def define(self, name: str, value: Any):
+    def asing_value(self, name: str, value: Any):
         self.symbols[name] = value
 
-    def resolve(self, name: str) -> Optional[Any]:
+    def find_value(self, name: str) -> Optional[Any]:
         if name in self.symbols:
             return self.symbols[name]
         if self.parent:
-            return self.parent.resolve(name)
+            return self.parent.find_value(name)
         return None
