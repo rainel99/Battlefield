@@ -1,11 +1,10 @@
 from abc import abstractmethod
 from ply import yacc
 import pickle
-from context import Context
 from Soldier import create_soldier
 from Start_Simulation import start_simulation
 from Battlefield import Map
-
+from dsl.context import Context
 
 # def create_context_child(context):
 #     my_context = {}
@@ -109,7 +108,7 @@ class ProgramNode(AstNode):
     def __init__(self, decl) -> None:
         self.decl = decl
 
-    def eval(self, context: dict):
+    def eval(self, context):
         for d in self.decl:
             d.eval(context)
 
@@ -171,7 +170,7 @@ class VarNode(AstNode):
         self.expr = expr
 
     def eval(self, context):
-        context[self.id] = self.expr.eval(context)
+        context.define(self.id,self.expr.eval(context))
 
     def checktype(self, context):
         if self.id in context:
@@ -182,7 +181,7 @@ class VarNode(AstNode):
             if self.type_.type == -1:
                 print("Error! : Variable inicializada como void")
                 return False
-            context[self.id] = (self.type_.type, self.expr.type)
+            context.define(self.id,(self.type_.type, self.expr.type))
         self.type = self.type_.type
         return True
 
@@ -284,8 +283,8 @@ class IfNode(AstNode):
         self.else_ = else_
 
     def eval(self, context):
-        new_context = create_context_child(context)
-        if self.condition.eval(context):
+        new_context = Context(context)
+        if self.condition.eval(context).token == 'True':
             self.statement.eval(new_context)
         elif self.else_ != None:
             self.else_.eval(context)
@@ -302,7 +301,7 @@ class ElseNode(AstNode):
         self.statement = statement
 
     def eval(self, context):
-        new_context = create_context_child(context)
+        new_context = Context(context)
         self.statement.eval(new_context)
 
     def checktype(self, context):
@@ -317,7 +316,8 @@ class PrintNode(AstNode):
         self.expr = expr
 
     def eval(self, context):
-        print(self.expr.eval(context))
+        a = self.expr.eval(context).token
+        print(a)
 
     def checktype(self, context):
         if not self.expr.checktype(context):
@@ -346,8 +346,8 @@ class WhileNode(AstNode):
         self.statement = statement
 
     def eval(self, context):
-        while self.condition.eval(context):
-            new_context = create_context_child(context)
+        while self.condition.eval(context).token == 'True':
+            new_context = Context(context)
             self.statement.eval(new_context)
             context = new_context
 
@@ -394,12 +394,15 @@ class AssignNode(ExpressionNode):
         self.value = value
 
     def eval(self, context):  # ! revisar
-        context[self.id] = self.value.eval(context)
+       # var = context.resolve(self.id)  
+        new_v = self.value.eval(context)
+        #var = (self.type_, new_v)
+        context.define(self.id,new_v)
 
     def checktype(self, context):
         if not self.value.checktype(context) or not self.type_.checktype(context):
             return False
-        if self.id in context.keys():
+        if self.id in context.symbols.keys():
             return False
         else:
             self.type_.checktype(context)
@@ -407,7 +410,7 @@ class AssignNode(ExpressionNode):
                 return False
             # if self.type_.type != self.value.type:
             #     return False
-            context[self.id] = (self.type_.type, self.value)
+            context.define(self.id,(self.type_.type, self.value))
         if self.type_.type != self.value.type:
             return False
         self.type = self.type_.type
@@ -420,15 +423,20 @@ class AssignNode_(ExpressionNode):
         self.value = value
 
     def eval(self, context):
-        context[self.id] = self.value.eval(context)
+        if context.resolve(self.id):
+            var = context.resolve(self.id)  
+            new_v = self.value.eval(context)
+            var.token = new_v.token
+        else:
+            context.define(self.id,new_v)
 
     def checktype(self, context):
-        if self.id not in context.keys():
+        if self.id not in context.symbols.keys():
             return False
         if not self.value.checktype(context):
             return False
         # !checkear esto, el indexer del dicc deberia dar un tipo
-        if context[self.id] != self.value.type:
+        if context.symbols[self.id] != self.value.type:
             return False
         self.type = self.value.type
         return True
@@ -451,7 +459,11 @@ class LogicOrNode(LogicExprNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) or self.right.eval(context)
+        if self.left.eval(context).token or self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return  self.left.eval(context).token or self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -467,7 +479,11 @@ class LogicaAndNode(LogicExprNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) and self.right.eval(context)
+        if self.left.eval(context).token and self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return self.left.eval(context).token and self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -483,15 +499,16 @@ class ComparisonNotEqNode(BinaryExpNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) != self.right.eval(context)
+        if self.left.eval(context).token != self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return self.left.eval(context).token != self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
             return False
         if self.left.type == 'int' or self.right.type == 'int':
-            self.type = self.left.type
-            return True
-        if self.left.type == 'str' or self.right.type == 'str':
             self.type = self.left.type
             return True
         return False
@@ -502,7 +519,11 @@ class ComparisonLtNode(BinaryExpNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) < self.right.eval(context)
+        if self.left.eval(context).token < self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return self.left.eval(context).token < self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -521,7 +542,12 @@ class ComparisonGtNode(BinaryExpNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) > self.right.eval(context)
+        a = self.left.eval(context).token
+        if self.left.eval(context).token > self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return self.left.eval(context).token > self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -540,7 +566,11 @@ class ComparisonGteNode(BinaryExpNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) >= self.right.eval(context)
+        if self.left.eval(context).token >= self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return self.left.eval(context).token >= self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -559,7 +589,11 @@ class ComparisonLteNode(BinaryExpNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) <= self.right.eval(context)
+        if self.left.eval(context).token <= self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return self.left.eval(context).token <= self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -578,7 +612,11 @@ class ComparisonEqEqNode(BinaryExpNode):
         super().__init__(left, right)
 
     def eval(self, context):
-        return self.left.eval(context) == self.right.eval(context)
+        if self.left.eval(context).token == self.right.eval(context).token:
+            return PrimaryTrueNode('True')
+        else:
+            return PrimaryFalseNode('False')
+        #return self.left.eval(context).token == self.right.eval(context).token
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -604,16 +642,16 @@ class FuncNode(AstNodeChildren):
         params_name = []
         for tup in self.params:
             params_name.append(tup[1])
-        context[self.id] = (params_name, self.block)
+        context.define(self.id, (params_name, self.block))
 
     def checktype(self, context):
-        if self.id in context.keys():
+        if self.id in context.symbols.keys():
             print("Error! : Funcion id existente.")
             return False
-        context[self.id] = (self.return_type.type, self.params)
-        new_context = create_context_child(context)
+        context.define(self.id, (self.return_type.type, self.params))
+        new_context = Context(context)
         for param in self.params:
-            new_context[param[1]] = param[0].type
+            new_context.symbols[param[1]] = param[0].type
         bool__, returns_block_types = self.block.checktype(new_context)
         if not bool__ or not self.return_type.checktype(context):
             return False
@@ -635,7 +673,7 @@ class UnaryNotNode(UnaryNode):
         self.exp_right = exp_right
 
     def eval(self, context):
-        return not self.exp_right.eval(context)
+        return not self.exp_right.eval(context).token
 
     def checktype(self, context):
         if not self.exp_right.checktype(context):
@@ -651,7 +689,7 @@ class UnaryMinusNode(UnaryNode):
         self.exp_right = exp_right
 
     def eval(self, context):
-        return - self.exp_right.eval(context)
+        return PrimaryNumberNode(- self.exp_right.eval(context).token)
 
     def checktype(self, context):
         if not self.exp_right.checktype(context):
@@ -668,7 +706,7 @@ class MinusNode(BinaryExpNode):
         self.right = right
 
     def eval(self, context):
-        return self.left.eval(context) - self.right.eval(context)
+        return PrimaryNumberNode(self.left.eval(context).token - self.right.eval(context).token)
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -686,7 +724,9 @@ class PlusNode(BinaryExpNode):
         self.right = right
 
     def eval(self, context):
-        return self.left.eval(context) + self.right.eval(context)
+        a = self.left.eval(context).token
+        b = self.right.eval(context).token
+        return PrimaryNumberNode(self.left.eval(context).token + self.right.eval(context).token)
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -706,7 +746,7 @@ class StarNode(BinaryExpNode):
         self.right = right
 
     def eval(self, context):
-        return self.left.eval(context) * self.right.eval(context)
+        return PrimaryNumberNode(self.left.eval(context).token * self.right.eval(context).token)
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -724,7 +764,7 @@ class DivNode(BinaryExpNode):
         self.right = right
 
     def eval(self, context):
-        return self.left.eval(context) / self.right.eval(context)
+        return PrimaryNumberNode(self.left.eval(context).token / self.right.eval(context).token)
 
     def checktype(self, context):
         if not self.left.checktype(context) or not self.right.checktype(context):
@@ -749,27 +789,27 @@ class CallArgsNode(CallNode):
 
     def eval(self, context):
         temp = None
-        new_context = create_context_child(context)
-        if self.primary.id in new_context.keys():
-            if len(self.args) != len(new_context[self.primary.id][0]):
+        new_context = Context(context)
+        if new_context.resolve(self.primary.id) != None:
+            if len(self.args) != len(new_context.resolve(self.primary.id)[0]):
 
                 print("Error! : Llamada a funcion con mas parametros de los que recibe")
-            for i, name_var in enumerate(new_context[self.primary.id][0]):
-                new_context[name_var] = self.args[i].eval(context)
-            try:
-                context[self.primary.id][1].eval(new_context)
-            except:
-                return
+            for i, name_var in enumerate(new_context.resolve(self.primary.id)[0]):
+                new_context.define(name_var, self.args[i].eval(context))
+            #try:
+            new_context.resolve(self.primary.id)[1].eval(new_context)
+            #except:
+            #    return
         else:
             assert Exception("----")
 
     def checktype(self, context):
-        if self.primary.id not in context.keys():
+        if context.resolve(self.primary.id) == None:
             print("Error! : Llamado a funcion fuera de contexto")
             return False
         if not self.primary.checktype(context):
             return False
-        self.type = context[self.primary.id][0]
+        self.type = context.resolve(self.primary.id)[0]
         return True
 
 
@@ -778,7 +818,7 @@ class PrimaryNode(AstNode):
         self.token = token
 
     def eval(self, context):
-        return self.token
+        return self
 
 
 class PrimaryFalseNode(PrimaryNode):
@@ -786,7 +826,7 @@ class PrimaryFalseNode(PrimaryNode):
         super().__init__(token)
 
     def eval(self, context):
-        return False
+        return self
 
     def checktype(self, context):
         self.type = 'bool'
@@ -798,7 +838,7 @@ class PrimaryTrueNode(PrimaryNode):
         super().__init__(token)
 
     def eval(self, context):
-        return True
+        return self
 
     def checktype(self, context):
         self.type = 'bool'
@@ -810,7 +850,7 @@ class PrimaryNumberNode(PrimaryNode):
         super().__init__(token)
 
     def eval(self, context):
-        return self.token
+        return self
 
     def checktype(self, context):
         self.type = 'int'
@@ -822,7 +862,7 @@ class PrimaryStringNode(PrimaryNode):
         super().__init__(token)
 
     def eval(self, context):
-        return self.token
+        return self
 
     def checktype(self, context):
         self.type = 'str'
@@ -835,7 +875,7 @@ class PrimaryIdNode(PrimaryNode):  # !revisar
 
     def eval(self, context):
         if self.token in context.key():
-            return context[self.token]
+            return context.symbols[self.token]
         else:
             raise Exception("Variable fuera del contexto")
 
@@ -851,7 +891,7 @@ class PrimaryNilNode(PrimaryNode):
         super().__init__(token)
 
     def eval(self, context):
-        return None
+        return self
 
     def checktype(self, context):
         self.type = None
@@ -875,27 +915,38 @@ class CallVar(AstNode):
         self.id = id
 
     def eval(self, context):
-        if self.id in context:
-            if type(context[self.id]) is tuple:
-                return context[self.id][1].eval(context)
+        if context.resolve(self.id) != None:
+            if type(context.resolve(self.id)) is tuple:
+                return context.resolve(self.id)[1].eval(context)
             else:
-                return context[self.id]
+                return context.resolve(self.id)
         else:
-            assert Exception("----")
+             assert Exception("----")
+
+        # if self.id in context: #Antiguo
+        #     if type(context.symbols[self.id]) is tuple:
+        #         return context.symbols[self.id][1].eval(context)
+        #     else:
+        #         return context.symbols[self.id]
+        # else:
+        #     assert Exception("----")
 
     def checktype(self, context):  # !revisar
         # if self.id in context:
         #     print("Error! : Id de variable existente")
         #     return False
         # self.type = context[self.id][0]
-        if not self.id in context.keys():
-            return False
-        if type(context[self.id]) == tuple:
-            self.type = context[self.id][0]
+
+        # if not self.id in context.keys(): #Antiguo
+        #     return False
+        if context.resolve(self.id) == None:
+            return  False
+        if type(context.resolve(self.id)) == tuple:
+            self.type = context.resolve(self.id)[0]
         # if type(context[self.id]) == list:
 
         else:
-            self.type = context[self.id]
+            self.type = context.symbols[self.id]
         return True
 
 
